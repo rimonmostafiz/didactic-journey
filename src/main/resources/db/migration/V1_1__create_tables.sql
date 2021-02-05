@@ -1,6 +1,7 @@
 CREATE TABLE USERS(
     ID                  BIGINT          PRIMARY KEY AUTO_INCREMENT,
     USERNAME            VARCHAR(64)     NOT NULL UNIQUE,
+    PASSWORD            VARCHAR(64)     NOT NULL,
     EMAIL               VARCHAR(64)     NOT NULL UNIQUE,
     FIRST_NAME          VARCHAR(128),
     LAST_NAME           VARCHAR(128),
@@ -16,6 +17,7 @@ CREATE TABLE ACTIVITY_USERS(
     ACTIVITY_ID         BIGINT          PRIMARY KEY AUTO_INCREMENT,
     USER_ID             BIGINT,
     USERNAME            VARCHAR(64),
+    PASSWORD            VARCHAR(64)     NOT NULL,
     EMAIL               VARCHAR(64),
     FIRST_NAME          VARCHAR(128),
     LAST_NAME           VARCHAR(128),
