@@ -8,23 +8,62 @@
 		<version>2.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>io.github.rimonmostafiz</groupId>
 	<artifactId>didactic-journey</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>didactic-journey</name>
 	<description>Task manager REST API</description>
+
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>dev</id>-->
+<!--			<activation>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+<!--			<build>-->
+<!--				<resources>-->
+<!--					<resource>-->
+<!--						<directory>src/main/resources/build-profiles/dev</directory>-->
+<!--					</resource>-->
+<!--				</resources>-->
+<!--			</build>-->
+<!--		</profile>-->
+<!--		<profile>-->
+<!--			<id>test</id>-->
+<!--			<build>-->
+<!--				<resources>-->
+<!--					<resource>-->
+<!--						<directory>src/main/resources/build-profiles/test</directory>-->
+<!--					</resource>-->
+<!--				</resources>-->
+<!--			</build>-->
+<!--		</profile>-->
+<!--		<profile>-->
+<!--			<id>prod</id>-->
+<!--			<build>-->
+<!--				<resources>-->
+<!--					<resource>-->
+<!--						<directory>src/main/resources/build-profiles/prod</directory>-->
+<!--					</resource>-->
+<!--				</resources>-->
+<!--			</build>-->
+<!--		</profile>-->
+<!--	</profiles>-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-security</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -45,6 +84,19 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>7.5.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -59,6 +111,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>7.5.2</version>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/taskdb</url>
+					<user>root</user>
 				</configuration>
 			</plugin>
 		</plugins>
