@@ -1,11 +1,13 @@
+server:
+  servlet:
+    context-path: /task-manager
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/taskdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    url: jdbc:mysql://localhost:3306/taskdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=BST&useLegacyDatetimeCode=false
     username: root
     password:
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
