@@ -29,11 +29,10 @@ public abstract class ActivityCommon extends EntityCommon implements Serializabl
     @Column(name = "INTERNAL_VERSION")
     protected Long version;
 
-    public static void mapper(ActivityCommon activity, String activityUser,
-                              ActivityAction activityAction, LocalDateTime activityTime) {
+    public static void mapper(ActivityCommon activity, String activityUser, ActivityAction activityAction) {
         activity.setActivityUser(activityUser);
         activity.setActivityAction(activityAction.getAction());
-        activity.setActivityTime(activityTime);
+        activity.setActivityTime(LocalDateTime.now());
     }
 
     public static void mapper(ActivityCommon activity, EntityCommon entity) {

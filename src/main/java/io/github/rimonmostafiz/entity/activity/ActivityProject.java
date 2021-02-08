@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /**
  * @author Rimon Mostafiz
@@ -51,9 +50,8 @@ public class ActivityProject extends ActivityCommon {
         return activity;
     }
 
-    public ActivityProject(Project project, String activityUse,
-                           ActivityAction activityAction, LocalDateTime activityTime) {
+    public ActivityProject(Project project, String activityUse, ActivityAction activityAction) {
         ActivityProject activity = of(project);
-        ActivityCommon.mapper(activity, activityUse, activityAction, activityTime);
+        ActivityCommon.mapper(activity, activityUse, activityAction);
     }
 }

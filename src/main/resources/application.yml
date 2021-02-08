@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /task-manager
+    context-path: /didactic-journey
 
 spring:
   datasource:
@@ -11,3 +11,4 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false

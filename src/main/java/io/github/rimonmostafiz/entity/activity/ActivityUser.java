@@ -66,7 +66,7 @@ public class ActivityUser extends ActivityCommon {
 
     public ActivityUser(User user, String activityUser, ActivityAction activityAction, LocalDateTime activityTime) {
         ActivityUser activity = of(user);
-        ActivityCommon.mapper(activity, activityUser, activityAction, activityTime);
+        ActivityCommon.mapper(activity, activityUser, activityAction);
     }
 
 }
