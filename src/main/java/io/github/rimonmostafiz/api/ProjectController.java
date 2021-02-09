@@ -1,9 +1,9 @@
 package io.github.rimonmostafiz.api;
 
-import io.github.rimonmostafiz.io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.model.ProjectModel;
 import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.model.response.ProjectResponse;
+import io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +34,12 @@ public class ProjectController {
     @GetMapping("/project/{id}")
     public ResponseEntity<RestResponse<ProjectResponse>> getProject(@PathVariable Long id) {
         ProjectResponse projectResponse = projectService.getProject(id);
+        return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
+    }
+
+    @GetMapping("/project/user/{id}")
+    public ResponseEntity<RestResponse<ProjectResponse>> getProjectByUserId(@PathVariable(name = "id") Long userId) {
+        ProjectResponse projectResponse = projectService.getAllProjects(userId);
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 

@@ -20,5 +20,6 @@ public class ProjectModel {
 
     private Status status;
 
+    private UserModel assignedUser;
 
 }
