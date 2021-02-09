@@ -37,6 +37,9 @@ public class ActivityProject extends ActivityCommon {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "ASSIGNED_USER")
+    private Long assignedUser;
+
     private static ActivityProject of(Project entity) {
         ActivityProject activity = new ActivityProject();
 
@@ -44,6 +47,7 @@ public class ActivityProject extends ActivityCommon {
         activity.setName(entity.getName());
         activity.setDescription(entity.getDescription());
         activity.setStatus(entity.getStatus());
+        activity.setAssignedUser(entity.getAssignedUser().getId());
 
         ActivityCommon.mapper(activity, entity);
 

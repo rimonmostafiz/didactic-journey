@@ -35,6 +35,10 @@ public class Project extends EntityCommon {
     @NotBlank(message = "{error.project.status.empty}")
     private Status status;
 
+    @OneToOne
+    @JoinColumn(name = "ASSIGNED_USER", referencedColumnName = "ID")
+    private User assignedUser;
+
 //    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Task> tasks;
 }

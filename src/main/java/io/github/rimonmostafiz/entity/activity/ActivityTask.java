@@ -41,6 +41,9 @@ public class ActivityTask extends ActivityCommon {
     @Column(name = "PROJECT_ID")
     private Long project;
 
+    @Column(name = "ASSIGNED_USER")
+    private Long assignedUser;
+
     private static ActivityTask of(Task entity) {
         ActivityTask activity = new ActivityTask();
 
@@ -48,6 +51,7 @@ public class ActivityTask extends ActivityCommon {
         activity.setDescription(entity.getDescription());
         activity.setStatus(entity.getStatus());
         activity.setProject(entity.getProject().getId());
+        activity.setAssignedUser(entity.getAssignedUser().getId());
 
         ActivityCommon.mapper(activity, entity);
 
