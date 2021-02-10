@@ -6,7 +6,6 @@ import io.github.rimonmostafiz.entity.common.ActivityAction;
 import io.github.rimonmostafiz.entity.common.ActivityCommon;
 import io.github.rimonmostafiz.entity.db.Project;
 import io.github.rimonmostafiz.model.ProjectModel;
-import io.github.rimonmostafiz.model.response.ProjectResponse;
 import io.github.rimonmostafiz.repository.ProjectRepository;
 import io.github.rimonmostafiz.repository.UserRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityProjectRepository;
@@ -37,7 +36,7 @@ public class ProjectService {
     Supplier<EntityNotFoundException> userNotFound = () ->
             new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No user found");
 
-    public ProjectResponse createProject(ProjectModel model, String requestUser) {
+    public ProjectModel createProject(ProjectModel model, String requestUser) {
         Project project = ProjectMapper.modelToEntityMapperForCreate(model, requestUser);
         Project savedProject = projectRepository.save(project);
 
@@ -46,34 +45,30 @@ public class ProjectService {
         ActivityCommon.mapper(activityProject, requestUser, ActivityAction.INSERT);
         activityProjectRepository.save(activityProject);
 
-        ProjectModel resultModel = ProjectMapper.mapper(savedProject);
-        return ProjectResponse.of(resultModel);
+        return ProjectMapper.mapper(savedProject);
     }
 
-    public ProjectResponse getProject(Long id) {
+    public ProjectModel getProject(Long id) {
         return projectRepository.findById(id)
                 .map(ProjectMapper::mapper)
-                .map(ProjectResponse::of)
                 .orElseThrow(projectNotFound);
     }
 
-    public ProjectResponse getAllProjects() {
-        return ProjectResponse.of(projectRepository.findAll()
+    public List<ProjectModel> getAllProjects() {
+        return projectRepository.findAll()
                 .stream()
                 .map(ProjectMapper::mapper)
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList());
     }
 
-    public ProjectResponse getAllProjects(Long userId) {
+    public List<ProjectModel> getAllProjects(Long userId) {
         List<Project> projects = userRepository.findById(userId)
                 .map(projectRepository::findAllByAssignedUser)
                 .orElseThrow(userNotFound);
 
-        return ProjectResponse.of(projects.stream()
+        return projects.stream()
                 .map(ProjectMapper::mapper)
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList());
     }
 
     public void deleteProject(Long id, String requestUser) {

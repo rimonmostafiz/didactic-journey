@@ -11,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
  */
 @RestController
-@RequestMapping("/task-manager-api")
+@RequestMapping("/task-manager")
 @RequiredArgsConstructor
 public class ProjectController {
 
@@ -27,25 +28,29 @@ public class ProjectController {
         //TODO: need to update after enabling spring security
         String requestUser = "user";
         //String requestUser = Utils.getUserNameFromRequest(request);
-        ProjectResponse response = projectService.createProject(model, requestUser);
-        return Utils.buildSuccessResponse(HttpStatus.CREATED, response);
+        ProjectModel project = projectService.createProject(model, requestUser);
+        ProjectResponse projectResponse = ProjectResponse.of(project);
+        return Utils.buildSuccessResponse(HttpStatus.CREATED, projectResponse);
     }
 
     @GetMapping("/project/{id}")
     public ResponseEntity<RestResponse<ProjectResponse>> getProject(@PathVariable Long id) {
-        ProjectResponse projectResponse = projectService.getProject(id);
+        ProjectModel project = projectService.getProject(id);
+        ProjectResponse projectResponse = ProjectResponse.of(project);
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 
     @GetMapping("/project/user/{id}")
     public ResponseEntity<RestResponse<ProjectResponse>> getProjectByUserId(@PathVariable(name = "id") Long userId) {
-        ProjectResponse projectResponse = projectService.getAllProjects(userId);
+        List<ProjectModel> projects = projectService.getAllProjects(userId);
+        ProjectResponse projectResponse = ProjectResponse.of(projects);
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 
     @GetMapping("/projects")
     public ResponseEntity<RestResponse<ProjectResponse>> getProjects() {
-        ProjectResponse projectResponse = projectService.getAllProjects();
+        List<ProjectModel> projects = projectService.getAllProjects();
+        ProjectResponse projectResponse = ProjectResponse.of(projects);
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 
