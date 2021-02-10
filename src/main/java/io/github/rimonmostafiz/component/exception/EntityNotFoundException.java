@@ -2,13 +2,15 @@ package io.github.rimonmostafiz.component.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 /**
  * @author Rimon Mostafiz
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class EntityNotFoundException extends RuntimeException {
 
     private HttpStatus status;

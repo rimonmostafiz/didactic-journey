@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * @author Rimon Mostafiz
@@ -44,6 +44,9 @@ public class ActivityTask extends ActivityCommon {
     @Column(name = "ASSIGNED_USER")
     private Long assignedUser;
 
+    @Column(name = "DUE_DATE")
+    private LocalDate dueDate;
+
     private static ActivityTask of(Task entity) {
         ActivityTask activity = new ActivityTask();
 
@@ -52,13 +55,14 @@ public class ActivityTask extends ActivityCommon {
         activity.setStatus(entity.getStatus());
         activity.setProject(entity.getProject().getId());
         activity.setAssignedUser(entity.getAssignedUser().getId());
+        activity.setDueDate(entity.getDueDate());
 
         ActivityCommon.mapper(activity, entity);
 
         return activity;
     }
 
-    public ActivityTask(Task task, String activityUser, ActivityAction activityAction, LocalDateTime activityTime) {
+    public ActivityTask(Task task, String activityUser, ActivityAction activityAction) {
         ActivityTask activity = of(task);
         ActivityCommon.mapper(activity, activityUser, activityAction);
     }

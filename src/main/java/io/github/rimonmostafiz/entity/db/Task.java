@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 /**
  * @author Rimon Mostafiz
@@ -35,9 +37,13 @@ public class Task extends EntityCommon {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
+    @NotNull(message = "{error.task.project.null")
     private Project project;
 
     @OneToOne
     @JoinColumn(name = "ASSIGNED_USER", referencedColumnName = "ID")
     private User assignedUser;
+
+    @Column(name = "DUE_DATE")
+    private LocalDate dueDate;
 }

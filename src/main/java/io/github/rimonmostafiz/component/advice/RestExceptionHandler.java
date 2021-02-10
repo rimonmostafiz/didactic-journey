@@ -17,8 +17,8 @@ import java.util.Locale;
  * @author Rimon Mostafiz
  */
 @Log4j2
-@RestControllerAdvice(basePackages = "io.github.rimonmostafiz")
 @RequiredArgsConstructor
+@RestControllerAdvice(basePackages = "io.github.rimonmostafiz")
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;

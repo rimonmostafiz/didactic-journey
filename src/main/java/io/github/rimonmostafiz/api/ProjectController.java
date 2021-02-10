@@ -40,9 +40,9 @@ public class ProjectController {
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 
-    @GetMapping("/project/user/{id}")
-    public ResponseEntity<RestResponse<ProjectResponse>> getProjectByUserId(@PathVariable(name = "id") Long userId) {
-        List<ProjectModel> projects = projectService.getAllProjects(userId);
+    @GetMapping("/project/search/{userId}")
+    public ResponseEntity<RestResponse<ProjectResponse>> getProjectByUserId(@PathVariable Long userId) {
+        List<ProjectModel> projects = projectService.getAllProjectsByUser(userId);
         ProjectResponse projectResponse = ProjectResponse.of(projects);
         return Utils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }

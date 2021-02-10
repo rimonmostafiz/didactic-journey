@@ -3,15 +3,22 @@ package io.github.rimonmostafiz.entity.common;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * @author Rimon Mostafiz
  */
 @Getter
 @AllArgsConstructor
 public enum TaskStatus {
-    OPEN("open"),
-    IN_PROGRESS("in progress"),
-    CLOSED("closed");
+    OPEN,
+    IN_PROGRESS,
+    CLOSED;
 
-    private final String status;
+    public static Optional<TaskStatus> getStatus(String status) {
+        return Arrays.stream(TaskStatus.values())
+                .filter(v -> v.name().equals(status))
+                .findFirst();
+    }
 }

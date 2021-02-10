@@ -3,7 +3,6 @@ package io.github.rimonmostafiz.service.project;
 import io.github.rimonmostafiz.component.exception.EntityNotFoundException;
 import io.github.rimonmostafiz.entity.activity.ActivityProject;
 import io.github.rimonmostafiz.entity.common.ActivityAction;
-import io.github.rimonmostafiz.entity.common.ActivityCommon;
 import io.github.rimonmostafiz.entity.db.Project;
 import io.github.rimonmostafiz.model.ProjectModel;
 import io.github.rimonmostafiz.repository.ProjectRepository;
@@ -40,9 +39,7 @@ public class ProjectService {
         Project project = ProjectMapper.modelToEntityMapperForCreate(model, requestUser);
         Project savedProject = projectRepository.save(project);
 
-        ActivityProject activityProject = new ActivityProject();
-        ActivityCommon.mapper(activityProject, project);
-        ActivityCommon.mapper(activityProject, requestUser, ActivityAction.INSERT);
+        ActivityProject activityProject = new ActivityProject(savedProject, requestUser, ActivityAction.INSERT);
         activityProjectRepository.save(activityProject);
 
         return ProjectMapper.mapper(savedProject);
@@ -61,7 +58,7 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProjectModel> getAllProjects(Long userId) {
+    public List<ProjectModel> getAllProjectsByUser(Long userId) {
         List<Project> projects = userRepository.findById(userId)
                 .map(projectRepository::findAllByAssignedUser)
                 .orElseThrow(userNotFound);
