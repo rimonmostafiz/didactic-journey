@@ -14,6 +14,7 @@ public class ValidationConstants {
     public final static String NUMERIC="^[0-9]*$";
 
     public final static int MAX_USERNAME_SIZE = 32;
+    public final static int ROLE_MAX_SIZE = 32;
     public final static int MAX_EMAIL_SIZE = 64;
     public final static int MIN_PASSWORD_SIZE = 6;
     public final static int MAX_PASSWORD_SIZE = 32;

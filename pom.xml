@@ -17,53 +17,60 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<jjwt.version>0.11.2</jjwt.version>
+		<logback.version>1.2.3</logback.version>
 	</properties>
 
-<!--	<profiles>-->
-<!--		<profile>-->
-<!--			<id>dev</id>-->
-<!--			<activation>-->
-<!--				<activeByDefault>true</activeByDefault>-->
-<!--			</activation>-->
-<!--			<build>-->
-<!--				<resources>-->
-<!--					<resource>-->
-<!--						<directory>src/main/resources/build-profiles/dev</directory>-->
-<!--					</resource>-->
-<!--				</resources>-->
-<!--			</build>-->
-<!--		</profile>-->
-<!--		<profile>-->
-<!--			<id>test</id>-->
-<!--			<build>-->
-<!--				<resources>-->
-<!--					<resource>-->
-<!--						<directory>src/main/resources/build-profiles/test</directory>-->
-<!--					</resource>-->
-<!--				</resources>-->
-<!--			</build>-->
-<!--		</profile>-->
-<!--		<profile>-->
-<!--			<id>prod</id>-->
-<!--			<build>-->
-<!--				<resources>-->
-<!--					<resource>-->
-<!--						<directory>src/main/resources/build-profiles/prod</directory>-->
-<!--					</resource>-->
-<!--				</resources>-->
-<!--			</build>-->
-<!--		</profile>-->
-<!--	</profiles>-->
+	<!--<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/build-profiles/dev</directory>
+					</resource>
+					<resource>
+						<directory>src/main/resources/db/migration</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>test</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/build-profiles/test</directory>
+					</resource>
+					<resource>
+						<directory>src/main/resources/db/migration</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/build-profiles/prod</directory>
+					</resource>
+					<resource>
+						<directory>src/main/resources/db/migration</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>-->
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-security</artifactId>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -71,6 +78,15 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
 		</dependency>
 
 		<dependency>
@@ -111,6 +127,37 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>5.4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>5.4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>3.5.1</version>
+		</dependency>
 
 
 	</dependencies>
@@ -136,6 +183,21 @@
 				<configuration>
 					<url>jdbc:mysql://localhost:3306/taskdb</url>
 					<user>root</user>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>logs</directory>
+							<includes>
+								<include>**</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
 				</configuration>
 			</plugin>
 		</plugins>

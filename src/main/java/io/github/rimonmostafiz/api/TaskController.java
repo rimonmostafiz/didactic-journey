@@ -1,14 +1,14 @@
 package io.github.rimonmostafiz.api;
 
 import io.github.rimonmostafiz.component.exception.ValidationException;
-import io.github.rimonmostafiz.entity.common.TaskStatus;
-import io.github.rimonmostafiz.model.TaskModel;
 import io.github.rimonmostafiz.model.common.RestResponse;
+import io.github.rimonmostafiz.model.dto.TaskModel;
+import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import io.github.rimonmostafiz.model.request.TaskCreateRequest;
 import io.github.rimonmostafiz.model.request.TaskUpdateRequest;
 import io.github.rimonmostafiz.model.response.TaskResponse;
 import io.github.rimonmostafiz.service.task.TaskService;
-import io.github.rimonmostafiz.utils.Utils;
+import io.github.rimonmostafiz.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import java.util.Optional;
  * @author Rimon Mostafiz
  */
 @RestController
-@RequestMapping("/task-manager")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -36,7 +36,7 @@ public class TaskController {
         //String requestUser = Utils.getUserNameFromRequest(request);
         TaskModel task = taskService.createTask(taskCreateRequest, requestUser);
         TaskResponse taskResponse = TaskResponse.of(task);
-        return Utils.buildSuccessResponse(HttpStatus.CREATED, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, taskResponse);
     }
 
     @PutMapping("/task/{id}")
@@ -47,35 +47,35 @@ public class TaskController {
         //String requestUser = Utils.getUserNameFromRequest(request);
         TaskModel task = taskService.updateTask(id, taskUpdateRequest, requestUser);
         TaskResponse taskResponse = TaskResponse.of(task);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
     @GetMapping("/task/{id}")
     public ResponseEntity<RestResponse<TaskResponse>> getTask(@PathVariable Long id) {
         TaskModel task = taskService.getTask(id);
         TaskResponse taskResponse = TaskResponse.of(task);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
     @GetMapping("/task/search/{projectId}")
     public ResponseEntity<RestResponse<TaskResponse>> searchAllByProject(@PathVariable Long projectId) {
         List<TaskModel> tasks = taskService.getAllTaskByProject(projectId);
         TaskResponse taskResponse = TaskResponse.of(tasks);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
     @GetMapping("/task/search/{userId}")
     public ResponseEntity<RestResponse<TaskResponse>> searchAllByUser(@PathVariable Long userId) {
         List<TaskModel> tasks = taskService.getAllTaskByUser(userId);
         TaskResponse taskResponse = TaskResponse.of(tasks);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
     @GetMapping("/task/search/expired")
     public ResponseEntity<RestResponse<TaskResponse>> getExpiredTask() {
         List<TaskModel> expiredTasks = taskService.getAllExpiredTask();
         TaskResponse taskResponse = TaskResponse.of(expiredTasks);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
     @GetMapping("/task/search/status/{status}")
@@ -84,6 +84,6 @@ public class TaskController {
         List<TaskModel> tasks = taskStatus.map(taskService::getAllTaskByStatus)
                 .orElseThrow(() -> new ValidationException(HttpStatus.BAD_REQUEST, "status", "Invalid Status"));
         TaskResponse taskResponse = TaskResponse.of(tasks);
-        return Utils.buildSuccessResponse(HttpStatus.OK, taskResponse);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 }

@@ -1,7 +1,7 @@
 package io.github.rimonmostafiz.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.github.rimonmostafiz.model.TaskModel;
+import io.github.rimonmostafiz.model.dto.TaskModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

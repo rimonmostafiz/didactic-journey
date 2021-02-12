@@ -1,14 +1,14 @@
 package io.github.rimonmostafiz.service.project;
 
 import io.github.rimonmostafiz.component.exception.EntityNotFoundException;
-import io.github.rimonmostafiz.entity.activity.ActivityProject;
-import io.github.rimonmostafiz.entity.common.ActivityAction;
-import io.github.rimonmostafiz.entity.db.Project;
-import io.github.rimonmostafiz.model.ProjectModel;
+import io.github.rimonmostafiz.model.dto.ProjectModel;
+import io.github.rimonmostafiz.model.entity.activity.ActivityProject;
+import io.github.rimonmostafiz.model.entity.common.ActivityAction;
+import io.github.rimonmostafiz.model.entity.db.Project;
+import io.github.rimonmostafiz.model.mapper.ProjectMapper;
 import io.github.rimonmostafiz.repository.ProjectRepository;
 import io.github.rimonmostafiz.repository.UserRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityProjectRepository;
-import io.github.rimonmostafiz.utils.mapper.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

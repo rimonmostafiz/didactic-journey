@@ -1,7 +1,7 @@
 package io.github.rimonmostafiz.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.github.rimonmostafiz.entity.common.TaskStatus;
+import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package io.github.rimonmostafiz.repository.activity;
 
-import io.github.rimonmostafiz.entity.activity.ActivityProject;
+import io.github.rimonmostafiz.model.entity.activity.ActivityProject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
