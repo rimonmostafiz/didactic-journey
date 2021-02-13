@@ -9,6 +9,7 @@ import io.github.rimonmostafiz.model.request.TaskUpdateRequest;
 import io.github.rimonmostafiz.model.response.TaskResponse;
 import io.github.rimonmostafiz.service.task.TaskService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
+import io.github.rimonmostafiz.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +32,17 @@ public class TaskController {
     @PostMapping("/task")
     public ResponseEntity<RestResponse<TaskResponse>> createTask(HttpServletRequest request,
                                                                  @RequestBody TaskCreateRequest taskCreateRequest) {
-        //TODO: need to update after enabling spring security
-        String requestUser = "user";
-        //String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getUserNameFromRequest(request);
         TaskModel task = taskService.createTask(taskCreateRequest, requestUser);
         TaskResponse taskResponse = TaskResponse.of(task);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, taskResponse);
     }
 
     @PutMapping("/task/{id}")
-    public ResponseEntity<RestResponse<TaskResponse>> updateTask(@PathVariable Long id,
-                                                               @RequestBody TaskUpdateRequest taskUpdateRequest) {
-        //TODO: need to update after enabling spring security
-        String requestUser = "user";
-        //String requestUser = Utils.getUserNameFromRequest(request);
+    public ResponseEntity<RestResponse<TaskResponse>> updateTask(HttpServletRequest request,
+                                                                 @PathVariable Long id,
+                                                                 @RequestBody TaskUpdateRequest taskUpdateRequest) {
+        String requestUser = Utils.getUserNameFromRequest(request);
         TaskModel task = taskService.updateTask(id, taskUpdateRequest, requestUser);
         TaskResponse taskResponse = TaskResponse.of(task);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);

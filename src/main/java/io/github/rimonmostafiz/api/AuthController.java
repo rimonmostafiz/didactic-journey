@@ -45,7 +45,7 @@ public class AuthController {
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     @Operation(summary = "Login", description = "Login Using Username And Password")
-    public ResponseEntity<RestResponse<AuthResponse>> login(@RequestBody AuthRequest authRequest, Locale locale) {
+    public ResponseEntity<RestResponse<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
         log.debug("Inside /auth/login with with username {}", authRequest.getUsername());
 
         authRequest.setUsername(authRequest.getUsername().trim().toLowerCase());

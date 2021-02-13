@@ -5,6 +5,7 @@ import io.github.rimonmostafiz.model.dto.ProjectModel;
 import io.github.rimonmostafiz.model.response.ProjectResponse;
 import io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
+import io.github.rimonmostafiz.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,7 @@ public class ProjectController {
     @PostMapping("/project")
     @ResponseStatus
     public ResponseEntity<RestResponse<ProjectResponse>> addProject(HttpServletRequest request, ProjectModel model) {
-        //TODO: need to update after enabling spring security
-        String requestUser = "user";
-        //String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getUserNameFromRequest(request);
         ProjectModel project = projectService.createProject(model, requestUser);
         ProjectResponse projectResponse = ProjectResponse.of(project);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, projectResponse);
@@ -57,9 +56,7 @@ public class ProjectController {
 
     @DeleteMapping("/project/{id}")
     public ResponseEntity<RestResponse<Long>> deleteProject(HttpServletRequest request, @PathVariable Long id) {
-        //TODO: need to update after enabling spring security
-        String requestUser = "user";
-        //String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getUserNameFromRequest(request);
         projectService.deleteProject(id, requestUser);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, id);
     }
