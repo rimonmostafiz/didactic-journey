@@ -164,6 +164,7 @@ public class JwtHelper {
         return claims.getSubject();
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> getRoles(Claims claims) {
         return (List<String>) claims.get("roles");
     }
