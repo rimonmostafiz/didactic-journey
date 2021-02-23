@@ -1,7 +1,7 @@
 package io.github.rimonmostafiz.service.auth.filter;
 
 import io.github.rimonmostafiz.component.exception.InvalidJwtAuthenticationException;
-import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
+import io.github.rimonmostafiz.service.auth.jwt.JwtService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ import static io.github.rimonmostafiz.utils.ResponseUtils.INVALID_TOKEN;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends GenericFilterBean {
 
-    private final JwtHelper jwtHelper;
+    private final JwtService jwtService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -43,19 +43,19 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
         MDC.put("random_code", randomCode);
         try {
             log.debug("Calling jwtHelper to resolve access token from request");
-            String accessToken = jwtHelper.resolveToken((HttpServletRequest) request);
-            String tokenType = jwtHelper.getTokenType(accessToken);
+            String accessToken = jwtService.resolveToken((HttpServletRequest) request);
+            String tokenType = jwtService.getTokenType(accessToken);
             if (accessToken != null && !tokenType.equalsIgnoreCase(ACCESS_TOKEN)) {
                 throw new AuthenticationServiceException(INVALID_TOKEN);
             }
             log.debug("accessToken: {}, tokenType: {}", accessToken, tokenType);
             log.debug("Calling jwtHelper to resolve claims from request");
-            Claims claims = jwtHelper.resolveClaims((HttpServletRequest) request);
+            Claims claims = jwtService.resolveClaims((HttpServletRequest) request);
             if (accessToken != null && claims != null
-                    && jwtHelper.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(accessToken)*/) {
-                MDC.put("logged_user", jwtHelper.getUsername(claims));
+                    && jwtService.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(accessToken)*/) {
+                MDC.put("logged_user", jwtService.getUsername(claims));
                 log.debug("Calling getAuthentication with claims, httpRequest and token");
-                var authentication = jwtHelper.getAuthentication(claims, (HttpServletRequest) request, accessToken);
+                var authentication = jwtService.getAuthentication(claims, (HttpServletRequest) request, accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (InvalidJwtAuthenticationException | AuthenticationServiceException ex) {

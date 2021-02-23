@@ -3,7 +3,7 @@ package io.github.rimonmostafiz.service.auth.filter;
 
 import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.service.auth.NoOpAuthManager;
-import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
+import io.github.rimonmostafiz.service.auth.jwt.JwtService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +31,12 @@ import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_LOGOUT;
 @Component
 public class LogoutFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final JwtHelper jwtHelper;
+    private final JwtService jwtService;
 
-    public LogoutFilter(JwtHelper jwtHelper) {
+    public LogoutFilter(JwtService jwtService) {
         super(AUTH_LOGOUT);
         setAuthenticationManager(new NoOpAuthManager());
-        this.jwtHelper = jwtHelper;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -45,12 +45,12 @@ public class LogoutFilter extends AbstractAuthenticationProcessingFilter {
             throws AuthenticationException, IOException {
         log.debug("Inside logout attempt authentication");
         log.debug("Calling jwtHelper to resolve refresh token from request");
-        String token = jwtHelper.resolveToken(request);
+        String token = jwtService.resolveToken(request);
         log.debug("token : {}", token);
         log.debug("Calling jwtHelper to resolve claims from request");
-        Claims claims = jwtHelper.resolveClaims(request);
-        if (token != null && jwtHelper.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(token)*/) {
-            Authentication authentication = jwtHelper.getAuthentication(claims, request, token);
+        Claims claims = jwtService.resolveClaims(request);
+        if (token != null && jwtService.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(token)*/) {
+            Authentication authentication = jwtService.getAuthentication(claims, request, token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
         }

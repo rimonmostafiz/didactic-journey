@@ -41,7 +41,7 @@ import static io.github.rimonmostafiz.utils.SessionKey.USER_DETAILS;
 @Component
 @EnableConfigurationProperties(JwtConfigProperties.class)
 @RequiredArgsConstructor
-public class JwtHelper {
+public class JwtService {
 
     private Key key;
     private JwtParser jwtParser;
@@ -58,17 +58,15 @@ public class JwtHelper {
     }
 
     public String createToken(String username, List<String> roles, String tokenType, Date tokenCreateTime) {
-        log.debug("Token create request for username : {}, tokenType : {}, tokenCreateTime : {}",
-                username, tokenType, tokenCreateTime);
+        log.debug("Token create request for username : {}, tokenType : {}, tokenCreateTime : {} with roles: [{}]",
+                username, tokenType, tokenCreateTime, roles);
         Claims claims = Jwts.claims().setSubject(username);
         Date tokenValidity;
 
         if (tokenType.equals(ACCESS_TOKEN)) {
             claims.put("roles", roles);
-            log.debug("roles : {}", roles);
             tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(jwtProperties.getAccessExpire()));
         } else {
-            log.debug("roles : {}", roles);
             tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(jwtProperties.getRefreshExpire()));
         }
 
@@ -90,10 +88,6 @@ public class JwtHelper {
         if (tokenType.equals(ACCESS_TOKEN)) {
             roles = getRoles(claims);
             log.debug("tokenType : access_token, username : {}, -> roles : {}", username, roles);
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities = roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
-            grantedAuthorities.addAll(simpleGrantedAuthorities);
         } else {
             List<UserRoles> userRoles = userRepository.findByUsername(username)
                     .map(User::getRoles)
@@ -101,9 +95,11 @@ public class JwtHelper {
             roles = userRoles.stream()
                     .map(UserRoles::getRoleName)
                     .collect(Collectors.toList());
-            log.debug("tokenType : refresh_token, Username : {}, -> roles : {}", username, roles);
-            roles.forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority(role)));
+            log.debug("tokenType : refresh_token, username : {}, -> roles : {}", username, roles);
         }
+        grantedAuthorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
         UserDetails userDetails = new UserPrincipal(username, null, roles);
         request.getSession().setAttribute(USER_DETAILS, userDetails);
         request.getSession().setAttribute(TYPE_OF_TOKEN, tokenType);

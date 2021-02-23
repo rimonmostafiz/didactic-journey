@@ -2,7 +2,7 @@ package io.github.rimonmostafiz.service.auth.filter;
 
 import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.service.auth.NoOpAuthManager;
-import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
+import io.github.rimonmostafiz.service.auth.jwt.JwtService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -33,28 +33,28 @@ import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_REFRESH;
 @Component
 public class JwtRefreshFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final JwtHelper jwtHelper;
+    private final JwtService jwtService;
 
-    public JwtRefreshFilter(JwtHelper jwtHelper) {
+    public JwtRefreshFilter(JwtService jwtService) {
         super(AUTH_REFRESH);
         setAuthenticationManager(new NoOpAuthManager());
-        this.jwtHelper = jwtHelper;
+        this.jwtService = jwtService;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
         log.debug("Calling jwtHelper to resolve token from request");
-        String refreshToken = jwtHelper.resolveToken(request);
-        String tokenType = jwtHelper.getTokenType(refreshToken);
+        String refreshToken = jwtService.resolveToken(request);
+        String tokenType = jwtService.getTokenType(refreshToken);
         if (refreshToken != null && !tokenType.equalsIgnoreCase(REFRESH_TOKEN)) {
             throw new AuthenticationServiceException(INVALID_TOKEN);
         }
         log.debug("refreshToken: {}, tokenType: {}", refreshToken, tokenType);
         log.debug("Calling jwtHelper to resolve claims from request");
-        Claims claims = jwtHelper.resolveClaims(request);
-        if (refreshToken != null && jwtHelper.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(refreshToken)*/) {
+        Claims claims = jwtService.resolveClaims(request);
+        if (refreshToken != null && jwtService.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(refreshToken)*/) {
             log.debug("Calling getAuthentication with claims, httpRequest and token");
-            Authentication authentication = jwtHelper.getAuthentication(claims, request, refreshToken);
+            Authentication authentication = jwtService.getAuthentication(claims, request, refreshToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
         }

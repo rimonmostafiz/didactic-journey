@@ -4,7 +4,7 @@ import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.model.entity.db.User;
 import io.github.rimonmostafiz.model.request.AuthRequest;
 import io.github.rimonmostafiz.model.response.AuthResponse;
-import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
+import io.github.rimonmostafiz.service.auth.jwt.JwtService;
 import io.github.rimonmostafiz.service.user.UserService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.SessionKey;
@@ -41,7 +41,7 @@ import static io.github.rimonmostafiz.service.auth.SecurityConstants.REFRESH_TOK
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final JwtHelper jwtHelper;
+    private final JwtService jwtService;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
@@ -68,8 +68,8 @@ public class AuthController {
 
         Date tokenCreateTime = new Date();
 
-        String accessToken = jwtHelper.createToken(username, roles, ACCESS_TOKEN, tokenCreateTime);
-        String refreshToken = jwtHelper.createToken(username, roles, REFRESH_TOKEN, tokenCreateTime);
+        String accessToken = jwtService.createToken(username, roles, ACCESS_TOKEN, tokenCreateTime);
+        String refreshToken = jwtService.createToken(username, roles, REFRESH_TOKEN, tokenCreateTime);
 
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, new AuthResponse(username, accessToken, refreshToken));
     }
@@ -88,7 +88,7 @@ public class AuthController {
         List<String> roles = new ArrayList<>(AuthorityUtils.authorityListToSet(authorities));
 
         Date tokenCreateTime = new Date();
-        String accessToken = jwtHelper.createToken(username, roles, ACCESS_TOKEN, tokenCreateTime);
+        String accessToken = jwtService.createToken(username, roles, ACCESS_TOKEN, tokenCreateTime);
 
         AuthResponse authResponse = new AuthResponse(username, accessToken);
 
