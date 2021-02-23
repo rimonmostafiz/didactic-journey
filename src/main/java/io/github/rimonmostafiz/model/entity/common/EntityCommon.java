@@ -36,17 +36,17 @@ public abstract class EntityCommon implements Serializable {
     @PrePersist
     public void beforeSave() {
         if (this.createTime == null) {
-            this.createTime = LocalDateTime.now(ZoneId.of("BST"));
+            this.createTime = LocalDateTime.now(ZoneId.of("BST", ZoneId.SHORT_IDS));
         }
     }
 
     @PreUpdate
     public void beforeEdit() {
-        this.editTime = LocalDateTime.now(ZoneId.of("BST"));
+        this.editTime = LocalDateTime.now(ZoneId.of("BST", ZoneId.SHORT_IDS));
     }
 
     @PreRemove
     public void beforeDelete() {
-        this.editTime = LocalDateTime.now(ZoneId.of("BST"));
+        this.editTime = LocalDateTime.now(ZoneId.of("BST", ZoneId.SHORT_IDS));
     }
 }
