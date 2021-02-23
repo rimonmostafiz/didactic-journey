@@ -4,12 +4,13 @@ import io.github.rimonmostafiz.component.exception.InvalidJwtAuthenticationExcep
 import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -22,20 +23,18 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static io.github.rimonmostafiz.service.auth.SecurityConstants.ACCESS_TOKEN;
-import static io.github.rimonmostafiz.service.auth.SecurityConstants.TOKEN_HEADER;
+import static io.github.rimonmostafiz.service.auth.SecurityConstants.AUTHORIZATION_HEADER;
 import static io.github.rimonmostafiz.utils.ResponseUtils.INVALID_TOKEN;
 
 /**
  * @author Rimon Mostafiz
  */
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends GenericFilterBean {
 
     private final JwtHelper jwtHelper;
-
-    public JwtAuthorizationFilter(JwtHelper jwtHelper) {
-        this.jwtHelper = jwtHelper;
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -56,17 +55,16 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
                     && jwtHelper.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(accessToken)*/) {
                 MDC.put("logged_user", jwtHelper.getUsername(claims));
                 log.debug("Calling getAuthentication with claims, httpRequest and token");
-                Authentication authentication = jwtHelper.getAuthentication(claims, (HttpServletRequest) request, accessToken);
+                var authentication = jwtHelper.getAuthentication(claims, (HttpServletRequest) request, accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (InvalidJwtAuthenticationException | AuthenticationServiceException ex) {
             ResponseUtils.createCustomResponse((HttpServletResponse) response,
-                    ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, TOKEN_HEADER, ex.getMessage()));
+                    ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, AUTHORIZATION_HEADER, ex.getMessage()));
         }
         try {
             chain.doFilter(request, response);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Global Exception caught", e);
             throw e;
         } finally {

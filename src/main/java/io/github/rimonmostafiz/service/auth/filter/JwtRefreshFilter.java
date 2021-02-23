@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static io.github.rimonmostafiz.service.auth.SecurityConstants.AUTHORIZATION_HEADER;
 import static io.github.rimonmostafiz.service.auth.SecurityConstants.REFRESH_TOKEN;
-import static io.github.rimonmostafiz.service.auth.SecurityConstants.TOKEN_HEADER;
 import static io.github.rimonmostafiz.utils.HttpUtils.determineTargetUrl;
 import static io.github.rimonmostafiz.utils.ResponseUtils.INVALID_TOKEN;
 import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_REFRESH;
@@ -73,7 +73,7 @@ public class JwtRefreshFilter extends AbstractAuthenticationProcessingFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException ex) throws IOException, ServletException {
         log.debug("authentication failed for target URL: {}", determineTargetUrl(request));
-        RestResponse<?> error = ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, TOKEN_HEADER, ex.getMessage());
+        RestResponse<?> error = ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, AUTHORIZATION_HEADER, ex.getMessage());
         ResponseUtils.createCustomResponse(response, error);
     }
 }

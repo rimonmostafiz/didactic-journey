@@ -3,9 +3,10 @@ package io.github.rimonmostafiz.service.auth.jwt;
 import io.github.rimonmostafiz.component.exception.InvalidJwtAuthenticationException;
 import io.github.rimonmostafiz.component.exception.UserNotFoundException;
 import io.github.rimonmostafiz.config.properties.JwtConfigProperties;
-import io.github.rimonmostafiz.model.entity.db.Role;
 import io.github.rimonmostafiz.model.entity.db.User;
+import io.github.rimonmostafiz.model.entity.db.UserRoles;
 import io.github.rimonmostafiz.repository.UserRepository;
+import io.github.rimonmostafiz.service.auth.UserPrincipal;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -94,14 +95,16 @@ public class JwtHelper {
                     .collect(Collectors.toList());
             grantedAuthorities.addAll(simpleGrantedAuthorities);
         } else {
-            List<Role> roleList = userRepository.findByUsername(username)
+            List<UserRoles> userRoles = userRepository.findByUsername(username)
                     .map(User::getRoles)
                     .orElseThrow(() -> new UserNotFoundException("User Not Found"));
-            roles = roleList.stream().map(Role::getName).collect(Collectors.toList());
+            roles = userRoles.stream()
+                    .map(UserRoles::getRoleName)
+                    .collect(Collectors.toList());
             log.debug("tokenType : refresh_token, Username : {}, -> roles : {}", username, roles);
             roles.forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority(role)));
         }
-        UserDetails userDetails = new io.github.rimonmostafiz.service.auth.UserDetails(username, null, roles);
+        UserDetails userDetails = new UserPrincipal(username, null, roles);
         request.getSession().setAttribute(USER_DETAILS, userDetails);
         request.getSession().setAttribute(TYPE_OF_TOKEN, tokenType);
         return new UsernamePasswordAuthenticationToken(userDetails, "", grantedAuthorities);
@@ -110,9 +113,9 @@ public class JwtHelper {
     public Claims resolveClaims(HttpServletRequest req) {
         try {
             log.debug("Trying to resolve claims token ");
-            String bearerToken = req.getHeader(TOKEN_HEADER);
-            if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-                return parseJwtClaims(bearerToken.substring(TOKEN_PREFIX.length()));
+            String bearerToken = req.getHeader(AUTHORIZATION_HEADER);
+            if (bearerToken != null && bearerToken.startsWith(BEARER_TOKEN_PREFIX)) {
+                return parseJwtClaims(bearerToken.substring(BEARER_TOKEN_PREFIX.length()));
             }
             return null;
         } catch (ExpiredJwtException ex) {
@@ -128,10 +131,10 @@ public class JwtHelper {
 
     public String resolveToken(HttpServletRequest request) {
         log.debug("Resolving jwt token from request");
-        String bearerToken = request.getHeader(TOKEN_HEADER);
-        if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (bearerToken != null && bearerToken.startsWith(BEARER_TOKEN_PREFIX)) {
             log.debug("Bearer token found in header, returning token");
-            return bearerToken.substring(TOKEN_PREFIX.length());
+            return bearerToken.substring(BEARER_TOKEN_PREFIX.length());
         }
         log.debug("Bearer token NOT found in header, returning token : null");
         return null;

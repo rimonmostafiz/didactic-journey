@@ -24,7 +24,7 @@ public class AuthFailureHandler implements AccessDeniedHandler {
         log.debug("authentication failed for target URL: {}", HttpUtils.determineTargetUrl(request));
         log.debug("Inside AuthFailureHandler handle, creating custom error response");
         var error
-                = ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, SecurityConstants.TOKEN_HEADER, ex.getMessage());
+                = ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, SecurityConstants.AUTHORIZATION_HEADER, ex.getMessage());
         ResponseUtils.createCustomResponse(response, error);
     }
 }

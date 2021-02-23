@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class ActivityTask extends ActivityCommon {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACTIVITY_ID")
     private Long activityId;
 

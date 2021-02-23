@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 public class Project extends EntityCommon {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 

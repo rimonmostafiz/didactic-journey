@@ -37,7 +37,7 @@ public class ProjectService {
 
     public ProjectModel createProject(ProjectModel model, String requestUser) {
         Project project = ProjectMapper.modelToEntityMapperForCreate(model, requestUser);
-        Project savedProject = projectRepository.save(project);
+        Project savedProject = projectRepository.saveAndFlush(project);
 
         ActivityProject activityProject = new ActivityProject(savedProject, requestUser, ActivityAction.INSERT);
         activityProjectRepository.save(activityProject);

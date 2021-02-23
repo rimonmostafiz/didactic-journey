@@ -25,7 +25,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException ex) throws IOException, ServletException {
         log.debug("authentication failed for target URL: {}", HttpUtils.determineTargetUrl(request));
         log.debug("Inside AuthEntryPoint commence, creating custom error response");
-        ErrorDetails errorDetails = new ErrorDetails(SecurityConstants.TOKEN_HEADER, ex.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails(SecurityConstants.AUTHORIZATION_HEADER, ex.getMessage());
         RestResponse<?> error = new RestResponse<>(HttpStatus.UNAUTHORIZED, errorDetails);
         ResponseUtils.createCustomResponse(response, error);
     }

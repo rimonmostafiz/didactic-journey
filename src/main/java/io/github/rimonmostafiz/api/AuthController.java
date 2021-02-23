@@ -8,6 +8,7 @@ import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
 import io.github.rimonmostafiz.service.user.UserService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.SessionKey;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import static io.github.rimonmostafiz.service.auth.SecurityConstants.ACCESS_TOKEN;
 import static io.github.rimonmostafiz.service.auth.SecurityConstants.REFRESH_TOKEN;
@@ -32,6 +36,7 @@ import static io.github.rimonmostafiz.service.auth.SecurityConstants.REFRESH_TOK
  */
 @Slf4j
 @RestController
+@Api(tags = "Authentication")
 @RequestMapping(path = "/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -46,7 +51,8 @@ public class AuthController {
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     @Operation(summary = "Login", description = "Login Using Username And Password")
     public ResponseEntity<RestResponse<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        log.debug("Inside /auth/login with with username {}", authRequest.getUsername());
+        log.debug("Inside /auth/login with username {} and password {}",
+                authRequest.getUsername(), authRequest.getPassword());
 
         authRequest.setUsername(authRequest.getUsername().trim().toLowerCase());
         String username = authRequest.getUsername().trim().toLowerCase();

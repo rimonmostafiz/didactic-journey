@@ -23,7 +23,7 @@ import static io.github.rimonmostafiz.utils.ValidationConstants.ROLE_MAX_SIZE;
 @EqualsAndHashCode(callSuper = true)
 public class Role extends EntityCommon {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 

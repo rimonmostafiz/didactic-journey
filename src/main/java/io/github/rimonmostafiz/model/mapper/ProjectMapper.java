@@ -13,7 +13,7 @@ public class ProjectMapper {
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         model.setStatus(entity.getStatus());
-        model.setAssignedUser(UserMapper.mapper(entity.getAssignedUser()));
+        model.setAssignedUser(UserMapper.mapUserCreateRequest(entity.getAssignedUser()));
         return model;
     }
 

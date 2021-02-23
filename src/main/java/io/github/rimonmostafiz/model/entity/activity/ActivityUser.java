@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 
 /**
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 public class ActivityUser extends ActivityCommon {
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACTIVITY_ID")
     private Long activityId;
 
@@ -64,9 +63,10 @@ public class ActivityUser extends ActivityCommon {
         return activity;
     }
 
-    public ActivityUser(User user, String activityUser, ActivityAction activityAction, LocalDateTime activityTime) {
+    public static ActivityUser of(User user, String activityUser, ActivityAction activityAction) {
         ActivityUser activity = of(user);
         ActivityCommon.mapper(activity, activityUser, activityAction);
+        return activity;
     }
 
 }

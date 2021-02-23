@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class SecurityConstants {
     public static final String AUTH_LOGIN_URL                   = "/auth/login";
-    public static final String TOKEN_HEADER                     = "Authorization";
-    public static final String TOKEN_PREFIX                     = "Bearer ";
+    public static final String AUTHORIZATION_HEADER             = "Authorization";
+    public static final String BEARER_TOKEN_PREFIX              = "Bearer ";
     public static final String TOKEN_TYPE                       = "typ";
     public static final String TOKEN_ISSUER                     = "secure-api";
     public static final String TOKEN_AUDIENCE                   = "secure-app";

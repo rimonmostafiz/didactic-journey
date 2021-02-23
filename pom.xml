@@ -33,7 +33,11 @@
             <build>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/messages</directory>
+                        <directory>src/main/resources/**</directory>
+                        <includes>
+                            <include>logback.xml</include>
+                            <include>**/*.properties</include>
+                        </includes>
                     </resource>
                 </resources>
             </build>
@@ -46,7 +50,11 @@
             <build>
                 <resources>
                     <resource>
-                        <directory>src/main/resources/messages</directory>
+                        <directory>src/main/resources/**</directory>
+                        <includes>
+                            <include>logback.xml</include>
+                            <include>**/*.properties</include>
+                        </includes>
                     </resource>
                 </resources>
             </build>
@@ -96,7 +104,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

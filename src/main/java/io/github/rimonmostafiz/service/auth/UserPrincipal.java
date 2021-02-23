@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.toList;
  */
 @Data
 @Builder
-public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
+public class UserPrincipal implements UserDetails {
 
     @NotEmpty
     private String username;
@@ -31,7 +32,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    public UserDetails(@NotEmpty String username, @NotEmpty String password, List<String> roles) {
+    public UserPrincipal(@NotEmpty String username, @NotEmpty String password, List<String> roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;

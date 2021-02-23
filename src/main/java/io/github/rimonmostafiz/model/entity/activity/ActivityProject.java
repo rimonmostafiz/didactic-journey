@@ -20,7 +20,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 public class ActivityProject extends ActivityCommon {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACTIVITY_ID")
     private Long activityId;
 

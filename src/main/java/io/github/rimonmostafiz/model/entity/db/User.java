@@ -7,10 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.rimonmostafiz.utils.ValidationConstants.*;
@@ -25,7 +23,7 @@ import static io.github.rimonmostafiz.utils.ValidationConstants.*;
 @EqualsAndHashCode(callSuper = true)
 public class User extends EntityCommon {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -56,10 +54,10 @@ public class User extends EntityCommon {
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "{error.user.status.blank}")
+    @NotNull(message = "{error.user.status.null}")
     private Status status;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")
-    private List<Role> roles;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ROLE_ID")
+    private List<UserRoles> roles = new ArrayList<>();
 }

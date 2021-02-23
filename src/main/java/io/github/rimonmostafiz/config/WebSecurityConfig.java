@@ -2,24 +2,26 @@ package io.github.rimonmostafiz.config;
 
 import io.github.rimonmostafiz.service.auth.AuthEntryPoint;
 import io.github.rimonmostafiz.service.auth.AuthFailureHandler;
+import io.github.rimonmostafiz.service.auth.filter.JwtAuthorizationFilter;
 import io.github.rimonmostafiz.service.auth.filter.JwtRefreshFilter;
-import io.github.rimonmostafiz.service.auth.filter.LogoutFilter;
-import io.github.rimonmostafiz.service.auth.jwt.JwtConfigurer;
-import io.github.rimonmostafiz.service.auth.jwt.JwtHelper;
+import io.github.rimonmostafiz.service.user.TaskManagerUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_LOGIN;
-import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_REFRESH;
+import static io.github.rimonmostafiz.utils.UrlHelper.*;
 
 /**
  * @author Rimon Mostafiz
@@ -30,11 +32,14 @@ import static io.github.rimonmostafiz.utils.UrlHelper.AUTH_REFRESH;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtHelper jwtHelper;
-
-    private final LogoutFilter logoutFilter;
-
     private final JwtRefreshFilter jwtRefreshFilter;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final TaskManagerUserDetailsService userDetailsService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
     @Bean
     @Override
@@ -46,27 +51,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-
-            .httpBasic()
-                .disable()
-            .cors()
+            .httpBasic().disable()
+                .csrf().disable()
+                .cors()
             .and()
-            .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_LOGIN).permitAll()
+                .anyRequest().authenticated()
             .and()
                 .antMatcher(AUTH_REFRESH)
                 .addFilterBefore(jwtRefreshFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests()
-                .anyRequest().authenticated()
-//            .and()
-//                .antMatcher(AUTH_LOGOUT)
-//                .addFilterBefore(logoutFilter, UsernamePasswordAuthenticationFilter.class)
-//                .authorizeRequests()
-//                .anyRequest().authenticated()
-            .and()
-                .apply(new JwtConfigurer(jwtHelper))
-            .and()
+                .antMatcher(ALL)
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new AuthEntryPoint())
                 .accessDeniedHandler(new AuthFailureHandler())
@@ -74,17 +70,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
-    // @formatter:on
+
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/api-docs/**",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/**",
-                "/swagger-ui.html",
-                "/webjars/**",
-                "/swagger-ui/**");
+        web.ignoring().antMatchers( all(API_DOCS),
+                                    all(V2_API_DOCS),
+                                    all(CONFIGURATION),
+                                    CONFIGURATION_UI,
+                                    all(WEB_JARS),
+                                    all(SWAGGER_RESOURCES),
+                                    SWAGGER_UI_HTML,
+                                    SWAGGER_UI
+        );
+    }
+    // @formatter:on
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean // Remove the ROLE_ prefix
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
     }
 }
