@@ -1,12 +1,13 @@
 package io.github.rimonmostafiz.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
+import java.io.Serializable;
 
 /**
  * @author Rimon Mostafiz
@@ -14,16 +15,13 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskCreateRequest {
-    @NotBlank(message = "{error.task.description.blank")
-    private String description;
+public class ProjectCreateRequest implements Serializable {
+    @NotBlank(message = "error.project.name.blank")
+    String name;
 
-    @NotBlank(message = "{error.task.status.blank}")
-    private String status;
+    String description;
 
-    @NotBlank(message = "{error.task.project.id.blank")
-    private Long projectId;
-
-    private LocalDate dueDate;
+    String status;
 }

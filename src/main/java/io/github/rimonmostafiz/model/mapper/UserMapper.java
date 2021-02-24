@@ -10,6 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 public class UserMapper {
 
+    public static UserModel mapToUserModel(User entity) {
+        UserModel model = new UserModel();
+        model.setId(entity.getId());
+        model.setUsername(entity.getUsername());
+        model.setEmail(entity.getEmail());
+        model.setFirstName(entity.getFirstName());
+        model.setLastName(entity.getLastName());
+        model.setStatus(entity.getStatus());
+        return model;
+    }
+
     public static UserModel mapUserCreateRequest(User entity) {
         UserModel model = new UserModel();
         model.setId(entity.getId());

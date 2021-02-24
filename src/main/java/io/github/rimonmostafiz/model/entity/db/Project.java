@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Rimon Mostafiz
@@ -24,7 +25,7 @@ public class Project extends EntityCommon {
     private Long id;
 
     @Column(name = "NAME")
-    @NotBlank(message = "{error.project.name.blank}")
+    @NotBlank(message = "error.project.name.blank}")
     private String name;
 
     @Column(name = "DESCRIPTION")
@@ -32,7 +33,7 @@ public class Project extends EntityCommon {
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "{error.project.status.empty}")
+    @NotNull(message = "{error.project.status.empty}")
     private Status status;
 
     @OneToOne

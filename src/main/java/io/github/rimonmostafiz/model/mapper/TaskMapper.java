@@ -1,6 +1,7 @@
 package io.github.rimonmostafiz.model.mapper;
 
 import io.github.rimonmostafiz.model.dto.TaskModel;
+import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import io.github.rimonmostafiz.model.entity.db.Project;
 import io.github.rimonmostafiz.model.entity.db.Task;
 import io.github.rimonmostafiz.model.entity.db.User;
@@ -27,7 +28,7 @@ public class TaskMapper {
         Task entity = new Task();
 
         entity.setDescription(taskCreateRequest.getDescription());
-        entity.setStatus(taskCreateRequest.getStatus());
+        entity.setStatus(TaskStatus.getStatus(taskCreateRequest.getStatus()));
         entity.setProject(project);
         entity.setAssignedUser(user);
         entity.setDueDate(taskCreateRequest.getDueDate());

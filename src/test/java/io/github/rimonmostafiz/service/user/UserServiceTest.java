@@ -37,7 +37,7 @@ class UserServiceTest {
     void createUser() {
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setUsername("admin");
-        userCreateRequest.setPassword("password");
+        userCreateRequest.setPassword("admin1");
         userCreateRequest.setEmail("admin@rimonmostafiz.com");
         userCreateRequest.setFirstName("Rimon");
         userCreateRequest.setLastName("Mostafiz");
@@ -50,7 +50,7 @@ class UserServiceTest {
         UserRoles userRoles = new UserRoles();
         userRoles.setUserId(adminUser.getId());
         userRoles.setRoleId(1L);
-        userRoles.setRoleName("Admin");
+        userRoles.setRoleName("ADMIN");
         userRoles.setCreateTime(LocalDateTime.now());
         userRoles.setCreatedBy("System");
 

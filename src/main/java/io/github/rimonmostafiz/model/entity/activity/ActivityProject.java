@@ -54,8 +54,9 @@ public class ActivityProject extends ActivityCommon {
         return activity;
     }
 
-    public ActivityProject(Project project, String activityUse, ActivityAction activityAction) {
+    public static ActivityProject of(Project project, String activityUse, ActivityAction activityAction) {
         ActivityProject activity = of(project);
         ActivityCommon.mapper(activity, activityUse, activityAction);
+        return activity;
     }
 }

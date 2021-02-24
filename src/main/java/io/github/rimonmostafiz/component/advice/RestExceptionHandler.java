@@ -8,15 +8,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Rimon Mostafiz
@@ -27,6 +35,19 @@ import java.util.Locale;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+        List<RestResponse<Object>> errorResponse = ex.getBindingResult().getAllErrors()
+                .stream()
+                .map(this::translateToError)
+                .collect(Collectors.toList());
+
+        return handleExceptionInternal(ex, errorResponse, headers, HttpStatus.BAD_REQUEST, request);
+    }
 
     @ExceptionHandler(value = EntityNotFoundException.class)
     private ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
@@ -72,5 +93,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         log.debug("Error while login", ex);
         String field = messageSource.getMessage("field.error", null, locale);
         return ResponseUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, field, ResponseUtils.INTERNAL_SERVER_ERROR);
+    }
+
+    private RestResponse<Object> translateToError(ObjectError error) {
+        log.warn("error: {}", error);
+        String fieldName = ((FieldError) error).getField();
+        Locale locale = LocaleContextHolder.getLocale();
+        // Spring Validator does not set defaultMessage in field error
+        // But JSR303 validator sets the message to default
+        var errorMessage = Optional.ofNullable(error.getDefaultMessage())
+                .map(msg -> messageSource.getMessage(msg, null, locale))
+                .orElseGet(error::getDefaultMessage);
+        log.debug("errorMessage: {}", errorMessage);
+        return ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, fieldName, errorMessage);
     }
 }

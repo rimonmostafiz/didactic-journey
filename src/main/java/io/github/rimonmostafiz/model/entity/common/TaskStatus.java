@@ -1,7 +1,9 @@
 package io.github.rimonmostafiz.model.entity.common;
 
+import io.github.rimonmostafiz.component.exception.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -12,13 +14,18 @@ import java.util.Optional;
 @Getter
 @AllArgsConstructor
 public enum TaskStatus {
-    OPEN,
-    IN_PROGRESS,
-    CLOSED;
+    OPEN("open"),
+    IN_PROGRESS("in progress"),
+    CLOSED("closed");
 
-    public static Optional<TaskStatus> getStatus(String status) {
-        return Arrays.stream(TaskStatus.values())
-                .filter(v -> v.name().equals(status))
+    String value;
+
+    public static TaskStatus getStatus(String status) {
+        Optional<TaskStatus> optTaskStatus = Arrays.stream(TaskStatus.values())
+                .filter(v -> v.getValue().equals(status))
                 .findFirst();
+
+        return optTaskStatus.orElseThrow(() ->
+                new ValidationException(HttpStatus.BAD_REQUEST, "invalid", "Invalid Task Status"));
     }
 }

@@ -1,6 +1,5 @@
 package io.github.rimonmostafiz.api;
 
-import io.github.rimonmostafiz.component.exception.ValidationException;
 import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.model.dto.TaskModel;
 import io.github.rimonmostafiz.model.entity.common.TaskStatus;
@@ -10,14 +9,15 @@ import io.github.rimonmostafiz.model.response.TaskResponse;
 import io.github.rimonmostafiz.service.task.TaskService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.Utils;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Rimon Mostafiz
@@ -63,6 +63,11 @@ public class TaskController {
     }
 
     @GetMapping("/task/search/{userId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @ApiOperation(
+            value = "Get all tasks by user",
+            notes = "An ADMIN User has the privilege to call this API"
+    )
     public ResponseEntity<RestResponse<TaskResponse>> searchAllByUser(@PathVariable Long userId) {
         List<TaskModel> tasks = taskService.getAllTaskByUser(userId);
         TaskResponse taskResponse = TaskResponse.of(tasks);
@@ -78,9 +83,8 @@ public class TaskController {
 
     @GetMapping("/task/search/status/{status}")
     public ResponseEntity<RestResponse<TaskResponse>> searchAllByStatus(@PathVariable String status) {
-        Optional<TaskStatus> taskStatus = TaskStatus.getStatus(status);
-        List<TaskModel> tasks = taskStatus.map(taskService::getAllTaskByStatus)
-                .orElseThrow(() -> new ValidationException(HttpStatus.BAD_REQUEST, "status", "Invalid Status"));
+        var taskStatus = TaskStatus.getStatus(status);
+        List<TaskModel> tasks = taskService.getAllTaskByStatus(taskStatus);
         TaskResponse taskResponse = TaskResponse.of(tasks);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }

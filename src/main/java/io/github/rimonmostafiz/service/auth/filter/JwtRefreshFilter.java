@@ -43,17 +43,18 @@ public class JwtRefreshFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        log.debug("Calling jwtHelper to resolve token from request");
+        String url = determineTargetUrl(request);
+        log.debug("inside JwtRefreshToken with url[{}], calling jwtHelper to resolve token from request", url);
         String refreshToken = jwtService.resolveToken(request);
         String tokenType = jwtService.getTokenType(refreshToken);
         if (refreshToken != null && !tokenType.equalsIgnoreCase(REFRESH_TOKEN)) {
             throw new AuthenticationServiceException(INVALID_TOKEN);
         }
         log.debug("refreshToken: {}, tokenType: {}", refreshToken, tokenType);
-        log.debug("Calling jwtHelper to resolve claims from request");
+        log.debug("resolve claims from request");
         Claims claims = jwtService.resolveClaims(request);
         if (refreshToken != null && jwtService.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(refreshToken)*/) {
-            log.debug("Calling getAuthentication with claims, httpRequest and token");
+            log.debug("calling getAuthentication with claims, httpRequest and token");
             Authentication authentication = jwtService.getAuthentication(claims, request, refreshToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;

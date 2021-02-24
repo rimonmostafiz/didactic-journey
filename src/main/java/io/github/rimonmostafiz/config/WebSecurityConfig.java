@@ -57,12 +57,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .authorizeRequests()
                 .antMatchers(AUTH_LOGIN).permitAll()
-                .anyRequest().authenticated()
             .and()
                 .antMatcher(AUTH_REFRESH)
                 .addFilterBefore(jwtRefreshFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+            .and()
                 .antMatcher(ALL)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .anyRequest().authenticated()
+            .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new AuthEntryPoint())
                 .accessDeniedHandler(new AuthFailureHandler())
@@ -81,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                     all(WEB_JARS),
                                     all(SWAGGER_RESOURCES),
                                     SWAGGER_UI_HTML,
-                                    SWAGGER_UI
+                                    all(SWAGGER_UI)
         );
     }
     // @formatter:on

@@ -50,6 +50,10 @@ public class UserService {
         return savedUser;
     }
 
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User Not found!"));
@@ -66,5 +70,9 @@ public class UserService {
                 .stream()
                 .map(UserRoles::getRoleName)
                 .collect(Collectors.toList());
+    }
+
+    public User getOne(Long assignedUser) {
+        return userRepository.getOne(assignedUser);
     }
 }

@@ -5,14 +5,17 @@ import io.github.rimonmostafiz.model.dto.ProjectModel;
 import io.github.rimonmostafiz.model.entity.activity.ActivityProject;
 import io.github.rimonmostafiz.model.entity.common.ActivityAction;
 import io.github.rimonmostafiz.model.entity.db.Project;
+import io.github.rimonmostafiz.model.entity.db.User;
 import io.github.rimonmostafiz.model.mapper.ProjectMapper;
+import io.github.rimonmostafiz.model.request.ProjectCreateRequest;
 import io.github.rimonmostafiz.repository.ProjectRepository;
-import io.github.rimonmostafiz.repository.UserRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityProjectRepository;
+import io.github.rimonmostafiz.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -22,10 +25,11 @@ import java.util.stream.Collectors;
  * @author Rimon Mostafiz
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProjectService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ProjectRepository projectRepository;
     private final ActivityProjectRepository activityProjectRepository;
 
@@ -35,11 +39,12 @@ public class ProjectService {
     Supplier<EntityNotFoundException> userNotFound = () ->
             new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No user found");
 
-    public ProjectModel createProject(ProjectModel model, String requestUser) {
-        Project project = ProjectMapper.modelToEntityMapperForCreate(model, requestUser);
+    public ProjectModel createProject(ProjectCreateRequest createRequest, String requestUser) {
+        User user = userService.getUserByUsername(requestUser);
+        Project project = ProjectMapper.modelToEntityMapperForCreate(createRequest, user);
         Project savedProject = projectRepository.saveAndFlush(project);
 
-        ActivityProject activityProject = new ActivityProject(savedProject, requestUser, ActivityAction.INSERT);
+        ActivityProject activityProject = ActivityProject.of(savedProject, requestUser, ActivityAction.INSERT);
         activityProjectRepository.save(activityProject);
 
         return ProjectMapper.mapper(savedProject);
@@ -59,7 +64,7 @@ public class ProjectService {
     }
 
     public List<ProjectModel> getAllProjectsByUser(Long userId) {
-        List<Project> projects = userRepository.findById(userId)
+        List<Project> projects = userService.findById(userId)
                 .map(projectRepository::findAllByAssignedUser)
                 .orElseThrow(userNotFound);
 
@@ -69,8 +74,8 @@ public class ProjectService {
     }
 
     public void deleteProject(Long id, String requestUser) {
-        Function<Project, ActivityProject> mapToActivity = project ->
-                new ActivityProject(project, requestUser, ActivityAction.DELETE);
+        Function<Project, ActivityProject> mapToActivity = project
+                -> ActivityProject.of(project, requestUser, ActivityAction.DELETE);
 
         ActivityProject activityProject = projectRepository.findById(id)
                 .map(mapToActivity)

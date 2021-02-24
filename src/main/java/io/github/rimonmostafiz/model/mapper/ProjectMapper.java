@@ -1,7 +1,10 @@
 package io.github.rimonmostafiz.model.mapper;
 
 import io.github.rimonmostafiz.model.dto.ProjectModel;
+import io.github.rimonmostafiz.model.entity.common.Status;
 import io.github.rimonmostafiz.model.entity.db.Project;
+import io.github.rimonmostafiz.model.entity.db.User;
+import io.github.rimonmostafiz.model.request.ProjectCreateRequest;
 
 /**
  * @author Rimon Mostafiz
@@ -13,20 +16,21 @@ public class ProjectMapper {
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         model.setStatus(entity.getStatus());
-        model.setAssignedUser(UserMapper.mapUserCreateRequest(entity.getAssignedUser()));
+        if (entity.getAssignedUser() != null) {
+            model.setAssignedUser(UserMapper.mapToUserModel(entity.getAssignedUser()));
+        }
         return model;
     }
 
-    public static Project modelToEntityMapperForCreate(ProjectModel model, String createdBy) {
+    public static Project modelToEntityMapperForCreate(ProjectCreateRequest createRequest, User createdBy) {
         Project entity = new Project();
 
-        entity.setDescription(model.getDescription());
-        entity.setId(model.getId());
-        entity.setName(model.getName());
-        entity.setDescription(model.getDescription());
-        entity.setStatus(model.getStatus());
+        entity.setName(createRequest.getName());
+        entity.setDescription(createRequest.getDescription());
+        entity.setStatus(Status.getStatus(createRequest.getStatus()));
+        entity.setAssignedUser(createdBy);
 
-        entity.setCreatedBy(createdBy);
+        entity.setCreatedBy(createdBy.getUsername());
         return entity;
     }
 }
