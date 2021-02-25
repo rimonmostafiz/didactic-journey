@@ -26,6 +26,6 @@ public enum TaskStatus {
                 .findFirst();
 
         return optTaskStatus.orElseThrow(() ->
-                new ValidationException(HttpStatus.BAD_REQUEST, "invalid", "Invalid Task Status"));
+                new ValidationException(HttpStatus.BAD_REQUEST, "status", "invalid.task.status"));
     }
 }

@@ -40,7 +40,7 @@ public class TaskMapper {
     public static void updateRequestToEntity(Task entity, TaskUpdateRequest taskUpdateRequest, String createdBy, Project project, User user) {
 
         entity.setDescription(taskUpdateRequest.getDescription());
-        entity.setStatus(taskUpdateRequest.getStatus());
+        entity.setStatus(TaskStatus.getStatus(taskUpdateRequest.getStatus()));
         entity.setProject(project);
         entity.setAssignedUser(user);
         entity.setDueDate(taskUpdateRequest.getDueDate());

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -16,13 +17,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskCreateRequest {
-    @NotBlank(message = "{error.task.description.blank")
+    @NotBlank(message = "error.task.description.blank")
     private String description;
 
-    @NotBlank(message = "{error.task.status.blank}")
+    @NotBlank(message = "error.task.status.blank")
     private String status;
 
-    @NotBlank(message = "{error.task.project.id.blank")
+    @NotNull(message = "error.task.project.id.null")
     private Long projectId;
 
     private LocalDate dueDate;

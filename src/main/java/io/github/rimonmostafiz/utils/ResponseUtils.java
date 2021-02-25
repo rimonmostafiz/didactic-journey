@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
@@ -30,10 +32,14 @@ public class ResponseUtils {
 
     public static <T> RestResponse<T> buildErrorRestResponse(HttpStatus httpStatus, String filed, String message) {
         if (filed != null) {
-            return new RestResponse<>(httpStatus, new ErrorDetails(filed, message));
+            return new RestResponse<>(httpStatus, Collections.singletonList(new ErrorDetails(filed, message)));
         } else {
-            return new RestResponse<>(httpStatus, new ErrorDetails(message));
+            return new RestResponse<>(httpStatus, Collections.singletonList(new ErrorDetails(message)));
         }
+    }
+
+    public static <T> RestResponse<T> buildErrorRestResponse(HttpStatus httpStatus, List<ErrorDetails> errors) {
+        return new RestResponse<>(httpStatus, errors);
     }
 
     public static <T> ResponseEntity<RestResponse<T>> buildSuccessResponse(HttpStatus httpStatus, T klass) {
@@ -41,12 +47,14 @@ public class ResponseUtils {
         return ResponseEntity.status(httpStatus).body(restResponse);
     }
 
-    public static <T> ResponseEntity<RestResponse<T>> buildErrorResponse(HttpStatus httpStatus, String filed, String message) {
+    public static <T> ResponseEntity<RestResponse<T>> buildErrorResponse(HttpStatus httpStatus,
+                                                                         String filed, String message) {
         RestResponse<T> errorRestResponse = buildErrorRestResponse(httpStatus, filed, message);
         return ResponseEntity.status(httpStatus).body(errorRestResponse);
     }
 
-    public static void createCustomResponse(HttpServletResponse response, RestResponse apiResponse) throws IOException {
+    public static <T> void createCustomResponse(HttpServletResponse response, RestResponse<T> apiResponse)
+            throws IOException {
         response.setContentType("application/json");
         response.setStatus(apiResponse.getStatus().value());
         OutputStream out = response.getOutputStream();

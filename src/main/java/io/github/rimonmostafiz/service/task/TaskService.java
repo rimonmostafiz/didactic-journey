@@ -12,18 +12,17 @@ import io.github.rimonmostafiz.model.entity.db.User;
 import io.github.rimonmostafiz.model.mapper.TaskMapper;
 import io.github.rimonmostafiz.model.request.TaskCreateRequest;
 import io.github.rimonmostafiz.model.request.TaskUpdateRequest;
-import io.github.rimonmostafiz.repository.ProjectRepository;
 import io.github.rimonmostafiz.repository.TaskRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityTaskRepository;
+import io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -36,20 +35,17 @@ import java.util.stream.Collectors;
 public class TaskService {
     private final UserService userservice;
     private final TaskRepository taskRepository;
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
     private final ActivityTaskRepository activityTaskRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final Supplier<EntityNotFoundException> taskNotFound = () ->
-            new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No task found");
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "taskId", "error.task.not.found");
 
     Supplier<EntityNotFoundException> userNotFound = () ->
-            new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No user found");
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
 
     public TaskModel createTask(TaskCreateRequest taskCreateRequest, String requestUser) {
-        Project project = projectRepository.getOne(taskCreateRequest.getProjectId());
+        Project project = projectService.findProjectById(taskCreateRequest.getProjectId());
         User user = userservice.getUserByUsername(requestUser);
         Task task = TaskMapper.createRequestToEntity(taskCreateRequest, requestUser, project, user);
         Task savedTask = taskRepository.save(task);
@@ -84,7 +80,7 @@ public class TaskService {
     }
 
     public List<TaskModel> getAllTaskByProject(Long projectId) {
-        List<Task> tasks = projectRepository.findById(projectId)
+        List<Task> tasks = Optional.ofNullable(projectService.findProjectById(projectId))
                 .map(taskRepository::findAllByProject)
                 .orElseThrow(userNotFound);
 
@@ -122,9 +118,9 @@ public class TaskService {
     public TaskModel updateTask(Long id, TaskUpdateRequest taskUpdateRequest, String requestUser) {
         Task task = taskRepository.getOne(id);
         if (task.getStatus() == TaskStatus.CLOSED) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "CLOSED task is not editable");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.task.status.closed.not.editable");
         }
-        Project project = projectRepository.getOne(taskUpdateRequest.getProjectId());
+        Project project = projectService.findProjectById(taskUpdateRequest.getProjectId());
         User user = userservice.getOne(taskUpdateRequest.getAssignedUser());
         TaskMapper.updateRequestToEntity(task, taskUpdateRequest, requestUser, project, user);
 

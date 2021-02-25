@@ -2,7 +2,8 @@ package io.github.rimonmostafiz.component.advice;
 
 import io.github.rimonmostafiz.component.exception.EntityNotFoundException;
 import io.github.rimonmostafiz.component.exception.UserNotFoundException;
-import io.github.rimonmostafiz.model.common.RestResponse;
+import io.github.rimonmostafiz.component.exception.ValidationException;
+import io.github.rimonmostafiz.model.common.ErrorDetails;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
@@ -41,29 +43,43 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        List<RestResponse<Object>> errorResponse = ex.getBindingResult().getAllErrors()
+        List<ErrorDetails> errorDetailsList = ex.getBindingResult()
+                .getAllErrors()
                 .stream()
-                .map(this::translateToError)
+                .map(this::translateToErrorDetails)
                 .collect(Collectors.toList());
+
+        var errorResponse = ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, errorDetailsList);
 
         return handleExceptionInternal(ex, errorResponse, headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage("error.malformed.json.request", null, locale);
+        var error = ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, null, message);
+        return super.handleExceptionInternal(ex, error, headers, status, request);
+    }
+
     @ExceptionHandler(value = EntityNotFoundException.class)
     private ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Locale locale = LocaleContextHolder.getLocale();
+        log.warn("EntityNotFoundException found", ex);
         String field = ex.getField() != null
-                ? messageSource.getMessage(ex.getField(), null, Locale.getDefault()) : null;
+                ? messageSource.getMessage(ex.getField(), null, locale) : null;
         String message = ex.getMessage() != null
-                ? messageSource.getMessage(ex.getMessage(), null, Locale.getDefault()) : null;
-
-        RestResponse<Object> errorRestResponse = ResponseUtils.buildErrorRestResponse(ex.getStatus(), field, message);
-        return ResponseEntity.status(ex.getStatus()).body(errorRestResponse);
+                ? messageSource.getMessage(ex.getMessage(), null, locale) : null;
+        return ResponseUtils.buildErrorResponse(ex.getStatus(), field, message);
     }
 
     @ExceptionHandler(value = DisabledException.class)
     private ResponseEntity<?> handleDisabledException(DisabledException ex) {
         Locale locale = LocaleContextHolder.getLocale();
-        log.debug("DisabledException found", ex);
+        log.warn("DisabledException found", ex);
         String field = messageSource.getMessage("user.username", null, locale);
         String message = messageSource.getMessage("error.account.disable", null, locale);
         return ResponseUtils.buildErrorResponse(HttpStatus.NOT_FOUND, field, message);
@@ -72,7 +88,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = UserNotFoundException.class)
     private ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex) {
         Locale locale = LocaleContextHolder.getLocale();
-        log.debug("UserNotFoundException found", ex);
+        log.warn("UserNotFoundException found", ex);
         String field = messageSource.getMessage("user.username", null, locale);
         String message = messageSource.getMessage("error.user.not.found", null, locale);
         return ResponseUtils.buildErrorResponse(HttpStatus.NOT_FOUND, field, message);
@@ -81,21 +97,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = BadCredentialsException.class)
     private ResponseEntity<?> handleBadCredentialsException(UserNotFoundException ex) {
         Locale locale = LocaleContextHolder.getLocale();
-        log.debug("BadCredentialsException found", ex);
+        log.warn("BadCredentialsException found", ex);
         String field = messageSource.getMessage("user.password", null, locale);
-        String message = messageSource.getMessage("error.invalid.username.password", null, locale);
+        String message = messageSource.getMessage("error.invalid.username.or.password", null, locale);
+        return ResponseUtils.buildErrorResponse(HttpStatus.UNAUTHORIZED, field, message);
+    }
+
+    @ExceptionHandler(value = ValidationException.class)
+    private ResponseEntity<?> handleValidationException(ValidationException ex) {
+        Locale locale = LocaleContextHolder.getLocale();
+        log.warn("ValidationException found", ex);
+        String field = messageSource.getMessage(ex.getField(), null, locale);
+        String message = messageSource.getMessage(ex.getMessage(), null, locale);
         return ResponseUtils.buildErrorResponse(HttpStatus.UNAUTHORIZED, field, message);
     }
 
     @ExceptionHandler(value = Exception.class)
     private ResponseEntity<?> handleUnknownException(Exception ex) {
         Locale locale = LocaleContextHolder.getLocale();
-        log.debug("Error while login", ex);
+        log.warn("Generic exception: ", ex);
         String field = messageSource.getMessage("field.error", null, locale);
         return ResponseUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, field, ResponseUtils.INTERNAL_SERVER_ERROR);
     }
 
-    private RestResponse<Object> translateToError(ObjectError error) {
+    private ErrorDetails translateToErrorDetails(ObjectError error) {
         log.warn("error: {}", error);
         String fieldName = ((FieldError) error).getField();
         Locale locale = LocaleContextHolder.getLocale();
@@ -104,7 +129,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         var errorMessage = Optional.ofNullable(error.getDefaultMessage())
                 .map(msg -> messageSource.getMessage(msg, null, locale))
                 .orElseGet(error::getDefaultMessage);
-        log.debug("errorMessage: {}", errorMessage);
-        return ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, fieldName, errorMessage);
+        log.warn("errorMessage: {}", errorMessage);
+        return new ErrorDetails(fieldName, errorMessage);
     }
 }

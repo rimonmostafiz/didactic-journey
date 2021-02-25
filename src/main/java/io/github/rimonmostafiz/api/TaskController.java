@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<RestResponse<TaskResponse>> createTask(HttpServletRequest request,
-                                                                 @RequestBody TaskCreateRequest taskCreateRequest) {
+                                                                 @RequestBody @Valid TaskCreateRequest taskCreateRequest) {
         String requestUser = Utils.getUserNameFromRequest(request);
         TaskModel task = taskService.createTask(taskCreateRequest, requestUser);
         TaskResponse taskResponse = TaskResponse.of(task);

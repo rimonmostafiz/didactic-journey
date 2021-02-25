@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
@@ -20,7 +21,7 @@ public class RestResponse<T> implements Serializable {
 
     private SuccessDetails<T> success;
 
-    private ErrorDetails error;
+    private List<ErrorDetails> error;
 
     private WarningDetails warning;
 
@@ -34,7 +35,7 @@ public class RestResponse<T> implements Serializable {
         this.message = message;
     }
 
-    public RestResponse(HttpStatus status, ErrorDetails error) {
+    public RestResponse(HttpStatus status, List<ErrorDetails> error) {
         this.statusCode = StatusCode.ERROR;
         this.status = status;
         this.error = error;

@@ -34,10 +34,10 @@ public class ProjectService {
     private final ActivityProjectRepository activityProjectRepository;
 
     private final Supplier<EntityNotFoundException> projectNotFound = () ->
-            new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No project found");
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
 
     Supplier<EntityNotFoundException> userNotFound = () ->
-            new EntityNotFoundException(HttpStatus.NO_CONTENT, "id", "No user found");
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
 
     public ProjectModel createProject(ProjectCreateRequest createRequest, String requestUser) {
         User user = userService.getUserByUsername(requestUser);
@@ -54,6 +54,10 @@ public class ProjectService {
         return projectRepository.findById(id)
                 .map(ProjectMapper::mapper)
                 .orElseThrow(projectNotFound);
+    }
+
+    public Project findProjectById(Long id) {
+        return projectRepository.findById(id).orElseThrow(projectNotFound);
     }
 
     public List<ProjectModel> getAllProjects() {

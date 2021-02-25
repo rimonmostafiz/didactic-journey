@@ -1,12 +1,12 @@
 package io.github.rimonmostafiz.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -17,13 +17,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskUpdateRequest {
-    @NotBlank(message = "{error.task.description.blank")
+    @NotBlank(message = "error.task.description.blank")
     private String description;
 
-    @NotBlank(message = "{error.task.status.blank}")
-    private TaskStatus status;
+    @NotBlank(message = "error.task.status.blank")
+    private String status;
 
-    @NotBlank(message = "{error.task.project.id.blank")
+    @NotNull(message = "error.task.project.id.blank")
     private Long projectId;
 
     private Long assignedUser;

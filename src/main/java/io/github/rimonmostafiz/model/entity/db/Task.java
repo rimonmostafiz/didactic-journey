@@ -32,7 +32,7 @@ public class Task extends EntityCommon {
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "{error.task.status.blank}")
+    @NotNull(message = "{error.task.status.blank}")
     private TaskStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
