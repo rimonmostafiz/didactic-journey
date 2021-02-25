@@ -18,8 +18,8 @@ public class TaskMapper {
         model.setId(entity.getId());
         model.setDescription(entity.getDescription());
         model.setStatus(entity.getStatus());
-        model.setProject(ProjectMapper.mapper(entity.getProject()));
-        model.setAssignedUser(UserMapper.mapUserCreateRequest(entity.getAssignedUser()));
+        model.setProject(ProjectMapper.mapperForInternal(entity.getProject()));
+        model.setAssignedUser(UserMapper.mapperForInternal(entity.getAssignedUser()));
         model.setDueDate(entity.getDueDate());
         return model;
     }

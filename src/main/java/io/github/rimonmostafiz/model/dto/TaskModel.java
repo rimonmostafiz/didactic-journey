@@ -1,5 +1,6 @@
 package io.github.rimonmostafiz.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaskModel {
     private Long id;
 

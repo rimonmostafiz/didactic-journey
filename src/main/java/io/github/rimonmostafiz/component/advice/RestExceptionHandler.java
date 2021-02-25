@@ -7,6 +7,7 @@ import io.github.rimonmostafiz.model.common.ErrorDetails;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +53,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         var errorResponse = ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, errorDetailsList);
 
         return handleExceptionInternal(ex, errorResponse, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex,
+                                                        HttpHeaders headers,
+                                                        HttpStatus status,
+                                                        WebRequest request) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage("error.method.argument.mismatch", null, locale);
+        var error = ResponseUtils.buildErrorRestResponse(HttpStatus.BAD_REQUEST, null, message);
+        return super.handleExceptionInternal(ex, error, headers, status, request);
     }
 
     @Override

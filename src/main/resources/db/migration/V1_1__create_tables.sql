@@ -110,6 +110,7 @@ CREATE TABLE ACTIVITY_TASK(
     DESCRIPTION         VARCHAR(512),
     STATUS              VARCHAR(64),
     PROJECT_ID          BIGINT,
+    ASSIGNED_USER       BIGINT,
     DUE_DATE            DATE,
     CREATE_TIME         TIMESTAMP(6),
     CREATED_BY          VARCHAR(64),

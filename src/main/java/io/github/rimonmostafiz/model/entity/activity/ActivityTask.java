@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 /**
@@ -30,12 +29,10 @@ public class ActivityTask extends ActivityCommon {
     private Long id;
 
     @Column(name = "DESCRIPTION")
-    @NotBlank(message = "{error.task.description.blank}")
     private String description;
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "{error.task.status.blank}")
     private TaskStatus status;
 
     @Column(name = "PROJECT_ID")
@@ -54,7 +51,9 @@ public class ActivityTask extends ActivityCommon {
         activity.setDescription(entity.getDescription());
         activity.setStatus(entity.getStatus());
         activity.setProject(entity.getProject().getId());
-        activity.setAssignedUser(entity.getAssignedUser().getId());
+        if (entity.getAssignedUser() != null) {
+            activity.setAssignedUser(entity.getAssignedUser().getId());
+        }
         activity.setDueDate(entity.getDueDate());
 
         ActivityCommon.mapper(activity, entity);
@@ -62,8 +61,9 @@ public class ActivityTask extends ActivityCommon {
         return activity;
     }
 
-    public ActivityTask(Task task, String activityUser, ActivityAction activityAction) {
+    public static ActivityTask of(Task task, String activityUser, ActivityAction activityAction) {
         ActivityTask activity = of(task);
         ActivityCommon.mapper(activity, activityUser, activityAction);
+        return activity;
     }
 }

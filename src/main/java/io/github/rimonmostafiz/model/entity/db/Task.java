@@ -5,6 +5,7 @@ import io.github.rimonmostafiz.model.entity.common.TaskStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
  */
 
 @Entity
+@ToString
 @NoArgsConstructor
 @Table(name = "TASK")
 @Data(staticConstructor = "of")
@@ -40,7 +42,7 @@ public class Task extends EntityCommon {
     @NotNull(message = "{error.task.project.null")
     private Project project;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ASSIGNED_USER", referencedColumnName = "ID")
     private User assignedUser;
 

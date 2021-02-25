@@ -32,6 +32,13 @@ public class UserMapper {
         return model;
     }
 
+    public static UserModel mapperForInternal(User entity) {
+        UserModel model = new UserModel();
+        model.setId(entity.getId());
+        model.setUsername(entity.getUsername());
+        return model;
+    }
+
     public static User mapUserCreateRequest(UserCreateRequest userCreateRequest, String createdBy,
                                             PasswordEncoder encoder) {
         User user = new User();

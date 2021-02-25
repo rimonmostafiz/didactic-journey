@@ -22,6 +22,13 @@ public class ProjectMapper {
         return model;
     }
 
+    public static ProjectModel mapperForInternal(Project entity) {
+        ProjectModel model = new ProjectModel();
+        model.setId(entity.getId());
+        model.setName(entity.getName());
+        return model;
+    }
+
     public static Project modelToEntityMapperForCreate(ProjectCreateRequest createRequest, User createdBy) {
         Project entity = new Project();
 

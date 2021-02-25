@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  * @author Rimon Mostafiz
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TaskService {
     private final UserService userservice;
@@ -50,7 +52,7 @@ public class TaskService {
         Task task = TaskMapper.createRequestToEntity(taskCreateRequest, requestUser, project, user);
         Task savedTask = taskRepository.save(task);
 
-        ActivityTask activityTask = new ActivityTask(savedTask, requestUser, ActivityAction.INSERT);
+        ActivityTask activityTask = ActivityTask.of(savedTask, requestUser, ActivityAction.INSERT);
         activityTaskRepository.save(activityTask);
 
         return TaskMapper.mapper(savedTask);
@@ -104,8 +106,7 @@ public class TaskService {
     }
 
     public void deleteTask(Long id, String requestUser) {
-        Function<Task, ActivityTask> mapToActivity = task ->
-                new ActivityTask(task, requestUser, ActivityAction.DELETE);
+        Function<Task, ActivityTask> mapToActivity = task -> ActivityTask.of(task, requestUser, ActivityAction.DELETE);
 
         ActivityTask activityTask = taskRepository.findById(id)
                 .map(mapToActivity)
@@ -126,7 +127,7 @@ public class TaskService {
 
         Task savedTask = taskRepository.save(task);
 
-        ActivityTask activityTask = new ActivityTask(savedTask, requestUser, ActivityAction.UPDATE);
+        ActivityTask activityTask = ActivityTask.of(savedTask, requestUser, ActivityAction.UPDATE);
         activityTaskRepository.save(activityTask);
 
         return TaskMapper.mapper(savedTask);
