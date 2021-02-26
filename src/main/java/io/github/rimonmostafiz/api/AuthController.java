@@ -80,7 +80,7 @@ public class AuthController {
     @PostMapping("/refresh")
     @ApiOperation(value = "Get new access_token with refresh_token",
             notes = "Need to Provide Refresh Token as Bearer Token In Authorization Header")
-    public ResponseEntity<RestResponse<AuthResponse>> refresfh(HttpServletRequest request) {
+    public ResponseEntity<RestResponse<AuthResponse>> refresh(HttpServletRequest request) {
         UserDetails userDetails = (UserDetails) request.getSession().getAttribute(SessionKey.USER_DETAILS);
         String username = userDetails.getUsername();
         User user = userService.getUserByUsername(username);
