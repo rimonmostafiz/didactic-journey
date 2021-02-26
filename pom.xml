@@ -35,8 +35,10 @@
                     <resource>
                         <directory>src/main/resources/**</directory>
                         <includes>
-                            <include>logback.xml</include>
-                            <include>**/*.properties</include>
+                            <include>logback-dev.xml</include>
+                            <include>application.properties</include>
+                            <include>application-dev.properties</include>
+                            <include>messages_en.properties</include>
                         </includes>
                     </resource>
                 </resources>
@@ -52,8 +54,10 @@
                     <resource>
                         <directory>src/main/resources/**</directory>
                         <includes>
-                            <include>logback.xml</include>
-                            <include>**/*.properties</include>
+                            <include>logback-prod.xml</include>
+                            <include>application.properties</include>
+                            <include>application-prod.properties</include>
+                            <include>messages_en.properties</include>
                         </includes>
                     </resource>
                 </resources>
@@ -167,11 +171,16 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.12.1</version>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
