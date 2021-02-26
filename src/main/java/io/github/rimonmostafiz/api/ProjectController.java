@@ -7,6 +7,7 @@ import io.github.rimonmostafiz.model.response.ProjectResponse;
 import io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.Utils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author Rimon Mostafiz
  */
 @Slf4j
+@Api(tags = "Project")
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor

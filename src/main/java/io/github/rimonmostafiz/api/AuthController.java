@@ -9,8 +9,7 @@ import io.github.rimonmostafiz.service.user.UserService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.SessionKey;
 import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -37,8 +39,8 @@ import static io.github.rimonmostafiz.service.auth.SecurityConstants.REFRESH_TOK
 @Slf4j
 @RestController
 @Api(tags = "Authentication")
-@RequestMapping(path = "/auth")
 @RequiredArgsConstructor
+@RequestMapping(path = "/auth")
 public class AuthController {
 
     private final JwtService jwtService;
@@ -48,18 +50,19 @@ public class AuthController {
 //    @Qualifier("redisTemplate")
 //    private final RedisTemplate<String, Object> redisTemplate;
 
-    @RequestMapping(path = "/login", method = RequestMethod.POST)
-    @Operation(summary = "Login", description = "Login Using Username And Password")
-    public ResponseEntity<RestResponse<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        log.debug("Inside /auth/login with username {} and password {}",
-                authRequest.getUsername(), authRequest.getPassword());
+    @PostMapping("/login")
+    @ApiOperation(value = "Get access_token and refresh_token", notes = "Login Using Username And Password")
+    public ResponseEntity<RestResponse<AuthResponse>> login(HttpServletRequest request,
+                                                            @RequestBody AuthRequest authRequest) {
+        log.debug("login request with authRequest: {}", authRequest.toString());
 
         authRequest.setUsername(authRequest.getUsername().trim().toLowerCase());
         String username = authRequest.getUsername().trim().toLowerCase();
         String password = authRequest.getPassword();
 
         log.debug("Authentication Start");
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        var authToken = new UsernamePasswordAuthenticationToken(username, password);
+        authenticationManager.authenticate(authToken);
         log.debug("Authentication Complete");
 
         User user = userService.getUserByUsername(username);
@@ -74,12 +77,10 @@ public class AuthController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, new AuthResponse(username, accessToken, refreshToken));
     }
 
-    @PostMapping(path = "/refresh")
-    @Operation(summary = "Refresh", security = @SecurityRequirement(name = "bearer-auth"),
-            description = "Need to Provide Refresh Token as Bearer Token In Authorization Header")
-    public ResponseEntity<RestResponse<AuthResponse>> refresh(HttpServletRequest request) {
-        log.debug("Inside /auth/refresh of AuthController");
-
+    @PostMapping("/refresh")
+    @ApiOperation(value = "Get new access_token with refresh_token",
+            notes = "Need to Provide Refresh Token as Bearer Token In Authorization Header")
+    public ResponseEntity<RestResponse<AuthResponse>> refresfh(HttpServletRequest request) {
         UserDetails userDetails = (UserDetails) request.getSession().getAttribute(SessionKey.USER_DETAILS);
         String username = userDetails.getUsername();
         User user = userService.getUserByUsername(username);

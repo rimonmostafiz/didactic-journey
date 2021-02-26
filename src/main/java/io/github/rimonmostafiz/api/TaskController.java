@@ -9,8 +9,10 @@ import io.github.rimonmostafiz.model.response.TaskResponse;
 import io.github.rimonmostafiz.service.task.TaskService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
 import io.github.rimonmostafiz.utils.Utils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +25,9 @@ import java.util.List;
 /**
  * @author Rimon Mostafiz
  */
+@Slf4j
 @RestController
+@Api(tags = "Task")
 @RequestMapping("/v1")
 @RequiredArgsConstructor
 public class TaskController {
