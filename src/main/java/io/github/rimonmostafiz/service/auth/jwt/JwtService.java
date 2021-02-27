@@ -57,7 +57,7 @@ public class JwtService {
     }
 
     public String createToken(String username, List<String> roles, String tokenType, Date tokenCreateTime) {
-        log.debug("Token create request for username : {}, tokenType : {}, tokenCreateTime : {} with roles: [{}]",
+        log.debug("token create request for username : {}, tokenType : {}, tokenCreateTime : {} with roles: [{}]",
                 username, tokenType, tokenCreateTime, roles);
         Claims claims = Jwts.claims().setSubject(username);
         Date tokenValidity;
@@ -79,7 +79,7 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(Claims claims, HttpServletRequest request, String token) {
-        log.debug("Authentication request of token received");
+        log.debug("authentication request of token received");
         String username = getUsername(claims);
         String tokenType = getTokenType(token);
         List<String> roles;
@@ -107,41 +107,41 @@ public class JwtService {
 
     public Claims resolveClaims(HttpServletRequest req) {
         try {
-            log.debug("Trying to resolve claims token ");
+            log.debug("trying to resolve claims token ");
             String bearerToken = req.getHeader(AUTHORIZATION_HEADER);
             if (bearerToken != null && bearerToken.startsWith(BEARER_TOKEN_PREFIX)) {
                 return parseJwtClaims(bearerToken.substring(BEARER_TOKEN_PREFIX.length()));
             }
             return null;
         } catch (ExpiredJwtException ex) {
-            log.debug("Could not parse jwt claims, Token Expired ", ex);
+            log.debug("could not parse jwt claims, Token Expired ", ex);
             req.setAttribute(EXPIRED, ex.getMessage());
             throw new InvalidJwtAuthenticationException(EXPIRED_TOKEN, ex);
         } catch (Exception ex) {
-            log.debug("Could not parse jwt claims, Token Invalid ", ex);
+            log.debug("could not parse jwt claims, Token Invalid ", ex);
             req.setAttribute(INVALID, ex.getMessage());
             throw new InvalidJwtAuthenticationException(INVALID_TOKEN, ex);
         }
     }
 
     public String resolveToken(HttpServletRequest request) {
-        log.debug("Resolving jwt token from request");
+        log.debug("resolving jwt token from request");
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && bearerToken.startsWith(BEARER_TOKEN_PREFIX)) {
-            log.debug("Bearer token found in header, returning token");
+            log.debug("vearer token found in header, returning token");
             return bearerToken.substring(BEARER_TOKEN_PREFIX.length());
         }
-        log.debug("Bearer token NOT found in header, returning token : null");
+        log.debug("bearer token not found in header, returning token: [null]");
         return null;
     }
 
     public boolean validateClaims(Claims claims) throws InvalidJwtAuthenticationException {
         try {
-            log.debug("Validating jwt token Claims");
+            log.debug("validating jwt token claims");
             return claims.getExpiration().after(new Date());
         } catch (Exception e) {
-            log.debug("Exception while parsing Claims");
-            throw new InvalidJwtAuthenticationException("Expired or invalid JWT token", e);
+            log.debug("exception while parsing claims");
+            throw new InvalidJwtAuthenticationException("expired or invalid JWT token", e);
         }
     }
 
@@ -172,18 +172,18 @@ public class JwtService {
     }
 
     public String getTokenType(String token) {
-        log.debug("Parsing token type from jwt token");
+        log.debug("parsing token type from jwt token");
         try {
             if (token != null) {
                 return (String) jwtParser.parse(token).getHeader().get(TOKEN_TYPE);
             }
-            log.debug("Token is Null, returning TYPE : null");
+            log.debug("token is null, returning token type: [null]");
             return null;
         } catch (ExpiredJwtException ex) {
-            log.debug("Could not parse jwt claims, Token Expired ", ex);
+            log.debug("could not parse jwt claims, token Expired ", ex);
             throw new InvalidJwtAuthenticationException(EXPIRED_TOKEN, ex);
         } catch (Exception ex) {
-            log.debug("Could not parse jwt claims, Token Invalid ", ex);
+            log.debug("could not parse jwt claims, token Invalid ", ex);
             throw new InvalidJwtAuthenticationException(INVALID_TOKEN, ex);
         }
     }

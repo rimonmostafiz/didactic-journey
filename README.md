@@ -25,13 +25,13 @@ mvn clean package -P dev -DskipTest
 
 **Build Profile - prod**
 ```
-mvn clean package -P orid -DskipTest
+mvn clean package -P prod -DskipTest
 ```
 
 ## Run
 **Profile - dev**
 ```
-mvn clean spring-boot:run -P prod -DskipTest
+mvn clean spring-boot:run -P dev -DskipTest
 ```
 
 **Profile - prod**

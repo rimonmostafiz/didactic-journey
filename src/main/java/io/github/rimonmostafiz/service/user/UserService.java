@@ -46,7 +46,7 @@ public class UserService {
         User savedUser = userRepository.saveAndFlush(user);
 
         ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.INSERT);
-        log.debug("Activity User: {}", activityUser.toString());
+        log.debug("activity User: {}", activityUser.toString());
         activityUserRepository.saveAndFlush(activityUser);
 
         return savedUser;

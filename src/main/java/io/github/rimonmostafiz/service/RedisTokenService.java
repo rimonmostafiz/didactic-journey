@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static io.github.rimonmostafiz.service.auth.SecurityConstants.WHITE_LIST_ACCESS_TOKEN_PREFIX;
-import static io.github.rimonmostafiz.service.auth.SecurityConstants.WHITE_LIST_REFRESH_TOKEN_PREFIX;
 
 /**
  * @author Rimon Mostafiz
@@ -19,11 +18,11 @@ public class RedisTokenService {
     private final JwtConfigProperties jwtConfigProperties;
 
     public void addTokenToWhiteList(String accessToken, String refreshToken) {
-        String wlAccessTokenKey = WHITE_LIST_ACCESS_TOKEN_PREFIX + accessToken;
-        String wlRefreshTokenKey = WHITE_LIST_REFRESH_TOKEN_PREFIX + refreshToken;
+//        String wlAccessTokenKey = WHITE_LIST_ACCESS_TOKEN_PREFIX + accessToken;
+//        String wlRefreshTokenKey = WHITE_LIST_REFRESH_TOKEN_PREFIX + refreshToken;
 
-        log.debug("White list -> Access Token Key : {}", wlAccessTokenKey);
-        log.debug("White list -> Refresh Token Key : {}", wlRefreshTokenKey);
+//        log.debug("white list -> access_token Key : {}", wlAccessTokenKey);
+//        log.debug("white list -> refresh_token Key : {}", wlRefreshTokenKey);
 
 //        long accTokValInMilli = TimeUnit.MINUTES.toMillis(accessTokenValidity);
 //        long refTokValInMilli = TimeUnit.MINUTES.toMillis(refreshTokenValidity);

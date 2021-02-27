@@ -22,7 +22,7 @@ public class AuthFailureHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException ex) throws IOException, ServletException {
         log.debug("authentication failed for target URL: {}", HttpUtils.determineTargetUrl(request));
-        log.debug("Inside AuthFailureHandler handle, creating custom error response");
+        log.debug("inside AuthFailureHandler handle, creating custom error response");
         var error
                 = ResponseUtils.buildErrorRestResponse(HttpStatus.UNAUTHORIZED, SecurityConstants.AUTHORIZATION_HEADER, ex.getMessage());
         ResponseUtils.createCustomResponse(response, error);

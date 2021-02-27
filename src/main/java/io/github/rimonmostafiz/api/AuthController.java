@@ -61,10 +61,10 @@ public class AuthController {
         String username = authRequest.getUsername().trim().toLowerCase();
         String password = authRequest.getPassword();
 
-        log.debug("Authentication Start");
+        log.debug("authentication started");
         var authToken = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(authToken);
-        log.debug("Authentication Complete");
+        log.debug("authentication completed");
 
         User user = userService.getUserByUsername(username);
         userService.ifDisableThrowException(user);
@@ -102,7 +102,7 @@ public class AuthController {
 //            security = @SecurityRequirement(name = "bearer-auth"),
 //            description = "Need to Provide Bearer Token In Authorization Header")
 //    public ResponseEntity<RestResponse<String>> logout(HttpServletRequest request, Locale locale) {
-//        log.debug("Inside /auth/logout for logout of AuthController");
+//        log.debug("inside /auth/logout for logout of AuthController");
 //        UserDetails userDetails = (UserDetails) request.getSession().getAttribute(SessionKey.USER_DETAILS);
 //        String tokenType = (String) request.getSession().getAttribute(SessionKey.TYPE_OF_TOKEN);
 //        log.debug("username : {} and tokenType from session : {}", userDetails.getUsername(), tokenType);
@@ -111,10 +111,10 @@ public class AuthController {
 //        boolean inserted = jwtHelper.insertTokenToBlackList(request, tokenType);
 //
 //        if (inserted) {
-//            log.debug("Logout Operation Success, Returning Response");
+//            log.debug("logout Operation Success, Returning Response");
 //            restApiResponse = ResponseUtils.buildSuccessRestResponse(HttpStatus.OK, ResponseUtils.LOGOUT_SUCCESS);
 //        } else {
-//            log.debug("Logout Operation Failed, Returning Response");
+//            log.debug("logout Operation Failed, Returning Response");
 //            restApiResponse = ResponseUtils.buildErrorRestResponse(HttpStatus.INTERNAL_SERVER_ERROR,
 //                    messageSource.getMessage("field.logout", null, locale), ResponseUtils.LOGOUT_FAILED);
 //        }

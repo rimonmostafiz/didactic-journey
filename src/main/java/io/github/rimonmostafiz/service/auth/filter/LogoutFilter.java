@@ -43,11 +43,11 @@ public class LogoutFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response)
             throws AuthenticationException, IOException {
-        log.debug("Inside logout attempt authentication");
-        log.debug("Calling jwtHelper to resolve refresh token from request");
+        log.debug("inside logout attempt authentication");
+        log.debug("calling jwtHelper to resolve refresh token from request");
         String token = jwtService.resolveToken(request);
         log.debug("token : {}", token);
-        log.debug("Calling jwtHelper to resolve claims from request");
+        log.debug("calling jwtHelper to resolve claims from request");
         Claims claims = jwtService.resolveClaims(request);
         if (token != null && jwtService.validateClaims(claims) /*&& jwtHelper.tokenNotBlackListed(token)*/) {
             Authentication authentication = jwtService.getAuthentication(claims, request, token);

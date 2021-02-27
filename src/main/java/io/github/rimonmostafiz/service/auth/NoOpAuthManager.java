@@ -13,7 +13,7 @@ public class NoOpAuthManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        log.debug("No Operation Authentication manager is invoked");
+        log.debug("no operation authentication manager is invoked");
         return authentication;
     }
 

@@ -46,7 +46,7 @@ class UserServiceTest {
         userCreateRequest.setStatus(Status.ACTIVE);
 
         User adminUser = userService.createUser(userCreateRequest, "System");
-        log.debug("User: {}", adminUser);
+        log.debug("user: {}", adminUser);
         Assertions.assertNotNull(adminUser);
 
         UserRoles userRoles = new UserRoles();
@@ -57,7 +57,7 @@ class UserServiceTest {
         userRoles.setCreatedBy("System");
 
         UserRoles savedUserRoles = userRolesRepository.save(userRoles);
-        log.debug("UserRoles: {}", savedUserRoles);
+        log.debug("roles of user: {}", savedUserRoles);
         Assertions.assertNotNull(savedUserRoles);
     }
 }
