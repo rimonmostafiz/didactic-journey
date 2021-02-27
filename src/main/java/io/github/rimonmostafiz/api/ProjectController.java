@@ -44,6 +44,8 @@ public class ProjectController {
     }
 
     @GetMapping("/projects")
+    @ApiOperation(value = "Get All project",
+            notes = "ADMIN user will get all the projects and USER will only get the list of projects they created")
     public ResponseEntity<RestResponse<ProjectResponse>> getAllProjects(HttpServletRequest request) {
         List<ProjectModel> projects;
         final String username = Utils.getUserNameFromRequest(request);
@@ -54,6 +56,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/project/{id}")
+    @ApiOperation(value = "Delete Project By Id")
     public ResponseEntity<RestResponse<Long>> deleteProject(HttpServletRequest request, @PathVariable Long id) {
         String requestUser = Utils.getUserNameFromRequest(request);
         projectService.deleteProject(id, requestUser);
@@ -61,6 +64,7 @@ public class ProjectController {
     }
 
     @GetMapping("/project/{id}")
+    @ApiOperation(value = "Get Project By Id")
     public ResponseEntity<RestResponse<ProjectResponse>> getProject(HttpServletRequest request, @PathVariable Long id) {
         ProjectModel project;
         final String username = Utils.getUserNameFromRequest(request);

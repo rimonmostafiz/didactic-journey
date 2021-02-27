@@ -69,10 +69,10 @@ public class SwaggerConfig {
     private List<Response> getGlobalResponse() {
         List<Response> response = new ArrayList<>();
         response.add(new ResponseBuilder().code("200").description("Success").build());
-        response.add(new ResponseBuilder().code("200").description("Created").build());
+        response.add(new ResponseBuilder().code("201").description("Created").build());
         response.add(new ResponseBuilder().code("400").description("Bad Request").build());
         response.add(new ResponseBuilder().code("401").description("You are not authorized to view the resource").build());
-        response.add(new ResponseBuilder().code("403").description("Accessing the resource you were trying to reach is forbidden").build());
+        response.add(new ResponseBuilder().code("403").description("Resource you were trying to access is forbidden").build());
         response.add(new ResponseBuilder().code("404").description("The resource you were trying to reach is not found").build());
         response.add(new ResponseBuilder().code("500").description("Internal Server Error").build());
         return response;
