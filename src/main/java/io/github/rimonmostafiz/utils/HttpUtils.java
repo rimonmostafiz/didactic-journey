@@ -6,7 +6,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Rimon Mostafiz
  */
 public class HttpUtils {
-    private HttpUtils() { }
+    private HttpUtils() {
+    }
 
     public static String determineTargetUrl(HttpServletRequest request) {
         String context = request.getContextPath();

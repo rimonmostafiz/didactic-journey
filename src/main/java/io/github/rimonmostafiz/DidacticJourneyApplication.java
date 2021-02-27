@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties
 public class DidacticJourneyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DidacticJourneyApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DidacticJourneyApplication.class, args);
+    }
 
 }

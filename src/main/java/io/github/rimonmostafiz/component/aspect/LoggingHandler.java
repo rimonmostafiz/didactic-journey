@@ -98,6 +98,7 @@ public class LoggingHandler {
             throw e;
         }
     }
+
     private String getValue(Object result) {
         String returnValue = null;
         if (null != result) {

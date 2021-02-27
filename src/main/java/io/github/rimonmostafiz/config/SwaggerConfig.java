@@ -66,7 +66,7 @@ public class SwaggerConfig {
         return new Contact(DEVELOPER, DEVELOPER_WEBSITE, DEVELOPER_EMAIL);
     }
 
-    private List<Response> getGlobalResponse(){
+    private List<Response> getGlobalResponse() {
         List<Response> response = new ArrayList<>();
         response.add(new ResponseBuilder().code("200").description("Success").build());
         response.add(new ResponseBuilder().code("200").description("Created").build());

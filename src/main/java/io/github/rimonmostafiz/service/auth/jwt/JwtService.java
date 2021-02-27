@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -43,10 +42,10 @@ import static io.github.rimonmostafiz.utils.SessionKey.USER_DETAILS;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private Key key;
-    private JwtParser jwtParser;
     private final UserRepository userRepository;
     private final JwtConfigProperties jwtProperties;
+    private Key key;
+    private JwtParser jwtParser;
 
 //    @Qualifier("stringRedisTemplate")
 //    private final RedisTemplate<String, String> redisTemplate;
@@ -84,7 +83,7 @@ public class JwtService {
         String username = getUsername(claims);
         String tokenType = getTokenType(token);
         List<String> roles;
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        List<GrantedAuthority> grantedAuthorities;
         if (tokenType.equals(ACCESS_TOKEN)) {
             roles = getRoles(claims);
             log.debug("tokenType : access_token, username : {}, -> roles : {}", username, roles);

@@ -13,5 +13,6 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByAssignedUser(User user);
+
     List<Project> findAllByCreatedBy(String username);
 }
