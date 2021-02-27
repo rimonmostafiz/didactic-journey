@@ -6,20 +6,26 @@ import io.github.rimonmostafiz.model.dto.ProjectModel;
 import io.github.rimonmostafiz.model.entity.activity.ActivityProject;
 import io.github.rimonmostafiz.model.entity.common.ActivityAction;
 import io.github.rimonmostafiz.model.entity.db.Project;
+import io.github.rimonmostafiz.model.entity.db.Task;
 import io.github.rimonmostafiz.model.entity.db.User;
 import io.github.rimonmostafiz.model.mapper.ProjectMapper;
 import io.github.rimonmostafiz.model.request.ProjectCreateRequest;
+import io.github.rimonmostafiz.model.response.ProjectDeleteResponse;
 import io.github.rimonmostafiz.repository.ProjectRepository;
+import io.github.rimonmostafiz.repository.TaskRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityProjectRepository;
 import io.github.rimonmostafiz.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -33,10 +39,12 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final UserService userService;
+    private final MessageSource messageSource;
+    private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final ActivityProjectRepository activityProjectRepository;
 
-    private final Supplier<EntityNotFoundException> projectNotFound = () ->
+    public static final Supplier<EntityNotFoundException> projectNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
 
     private final Supplier<EntityNotFoundException> userNotFound = () ->
@@ -62,7 +70,7 @@ public class ProjectService {
                 .orElseThrow(projectNotFound);
     }
 
-    public ProjectModel getProjectUser(Long id, String username) {
+    public ProjectModel getProjectForUser(Long id, String username) {
         Predicate<Project> isOwnProject = project -> project.getCreatedBy().equals(username);
 
         return Optional.of(projectRepository.findById(id))
@@ -100,15 +108,21 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteProject(Long id, String requestUser) {
-        Function<Project, ActivityProject> mapToActivity = project
-                -> ActivityProject.of(project, requestUser, ActivityAction.DELETE);
-
-        ActivityProject activityProject = projectRepository.findById(id)
-                .map(mapToActivity)
+    public ProjectDeleteResponse deleteProject(Long id, String requestUser) {
+        final Project project = Optional.ofNullable(findProjectById(id))
                 .orElseThrow(projectNotFound);
 
-        projectRepository.deleteById(id);
-        activityProjectRepository.save(activityProject);
+        final List<Task> tasks = taskRepository.findAllByProject(project);
+
+        if (CollectionUtils.isEmpty(tasks)) {
+            final var activityProject = ActivityProject.of(project, requestUser, ActivityAction.DELETE);
+            projectRepository.deleteById(id);
+            activityProjectRepository.save(activityProject);
+        } else {
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "projectId", "error.project.assigned.task");
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+        var message = messageSource.getMessage("success.project.delete", new Object[]{id, project.getName()}, locale);
+        return ProjectDeleteResponse.of(message, ProjectMapper.mapperForInternal(project));
     }
 }

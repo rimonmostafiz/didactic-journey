@@ -17,7 +17,7 @@ public class ProjectMapper {
         model.setDescription(entity.getDescription());
         model.setStatus(entity.getStatus());
         if (entity.getAssignedUser() != null) {
-            model.setAssignedUser(UserMapper.mapToUserModel(entity.getAssignedUser()));
+            model.setAssignedUser(UserMapper.mapperForInternal(entity.getAssignedUser()));
         }
         return model;
     }

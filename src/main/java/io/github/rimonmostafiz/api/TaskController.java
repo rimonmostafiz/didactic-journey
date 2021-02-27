@@ -46,7 +46,7 @@ public class TaskController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, taskResponse);
     }
 
-    @PutMapping("/task/{id}")
+    @PatchMapping("/task/{id}")
     @ApiOperation(value = "Edit Task")
     public ResponseEntity<RestResponse<TaskResponse>> editTask(HttpServletRequest request,
                                                                @PathVariable Long id,
@@ -63,7 +63,7 @@ public class TaskController {
         TaskModel task;
         final String username = Utils.getUserNameFromRequest(request);
         final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
-        task = isAdmin ? taskService.getTask(id) : taskService.getTaskUser(id, username);
+        task = isAdmin ? taskService.getTask(id) : taskService.getTaskForUser(id, username);
         TaskResponse taskResponse = TaskResponse.of(task);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }

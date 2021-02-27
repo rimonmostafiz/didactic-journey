@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -22,13 +20,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskEditRequest {
-    @NotBlank(message = "error.task.description.blank")
     private String description;
 
-    @NotBlank(message = "error.task.status.blank")
     private String status;
 
-    @NotNull(message = "error.task.project.id.null")
     private Long projectId;
 
     private Long assignedUser;

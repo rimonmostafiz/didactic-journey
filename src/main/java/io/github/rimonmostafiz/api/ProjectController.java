@@ -3,6 +3,7 @@ package io.github.rimonmostafiz.api;
 import io.github.rimonmostafiz.model.common.RestResponse;
 import io.github.rimonmostafiz.model.dto.ProjectModel;
 import io.github.rimonmostafiz.model.request.ProjectCreateRequest;
+import io.github.rimonmostafiz.model.response.ProjectDeleteResponse;
 import io.github.rimonmostafiz.model.response.ProjectResponse;
 import io.github.rimonmostafiz.service.project.ProjectService;
 import io.github.rimonmostafiz.utils.ResponseUtils;
@@ -57,10 +58,11 @@ public class ProjectController {
 
     @DeleteMapping("/project/{id}")
     @ApiOperation(value = "Delete Project By Id")
-    public ResponseEntity<RestResponse<Long>> deleteProject(HttpServletRequest request, @PathVariable Long id) {
+    public ResponseEntity<RestResponse<ProjectDeleteResponse>> deleteProject(HttpServletRequest request,
+                                                                             @PathVariable Long id) {
         String requestUser = Utils.getUserNameFromRequest(request);
-        projectService.deleteProject(id, requestUser);
-        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, id);
+        var deleteResponse = projectService.deleteProject(id, requestUser);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, deleteResponse);
     }
 
     @GetMapping("/project/{id}")
@@ -69,7 +71,7 @@ public class ProjectController {
         ProjectModel project;
         final String username = Utils.getUserNameFromRequest(request);
         final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
-        project = isAdmin ? projectService.getProject(id) : projectService.getProjectUser(id, username);
+        project = isAdmin ? projectService.getProject(id) : projectService.getProjectForUser(id, username);
         ProjectResponse projectResponse = ProjectResponse.of(project);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }

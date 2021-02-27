@@ -39,12 +39,21 @@ public class TaskMapper {
 
     public static void updateRequestToEntity(Task entity, TaskEditRequest taskEditRequest, String createdBy, Project project, User user) {
 
-        entity.setDescription(taskEditRequest.getDescription());
-        entity.setStatus(TaskStatus.getStatus(taskEditRequest.getStatus()));
-        entity.setProject(project);
-        entity.setAssignedUser(user);
-        entity.setDueDate(taskEditRequest.getDueDate());
-
+        if (taskEditRequest.getDescription() != null) {
+            entity.setDescription(taskEditRequest.getDescription());
+        }
+        if (taskEditRequest.getStatus() != null) {
+            entity.setStatus(TaskStatus.getStatus(taskEditRequest.getStatus()));
+        }
+        if (project != null) {
+            entity.setProject(project);
+        }
+        if (user != null) {
+            entity.setAssignedUser(user);
+        }
+        if (taskEditRequest.getDueDate() != null) {
+            entity.setDueDate(taskEditRequest.getDueDate());
+        }
         entity.setCreatedBy(createdBy);
     }
 }

@@ -121,7 +121,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn("ValidationException found", ex);
         String field = messageSource.getMessage(ex.getField(), null, locale);
         String message = messageSource.getMessage(ex.getMessage(), null, locale);
-        return ResponseUtils.buildErrorResponse(HttpStatus.UNAUTHORIZED, field, message);
+        return ResponseUtils.buildErrorResponse(ex.getStatus(), field, message);
     }
 
     @ExceptionHandler(value = Exception.class)

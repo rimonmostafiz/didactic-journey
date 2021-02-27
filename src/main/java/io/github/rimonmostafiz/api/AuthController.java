@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class AuthController {
     @PostMapping("/login")
     @ApiOperation(value = "Get access_token and refresh_token", notes = "Login Using Username And Password")
     public ResponseEntity<RestResponse<AuthResponse>> login(HttpServletRequest request,
-                                                            @RequestBody AuthRequest authRequest) {
+                                                            @RequestBody @Valid AuthRequest authRequest) {
         log.debug("login request with authRequest: {}", authRequest.toString());
 
         authRequest.setUsername(authRequest.getUsername().trim().toLowerCase());

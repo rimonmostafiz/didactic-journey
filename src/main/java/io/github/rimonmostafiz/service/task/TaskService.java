@@ -68,7 +68,7 @@ public class TaskService {
                 .orElseThrow(taskNotFound);
     }
 
-    public TaskModel getTaskUser(Long id, String username) {
+    public TaskModel getTaskForUser(Long id, String username) {
         Predicate<Task> isOwnTask = task -> task.getCreatedBy().equals(username);
 
         return Optional.of(taskRepository.findById(id))
@@ -95,12 +95,15 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public List<TaskModel> getAllTaskByProject(Long projectId) {
-        List<Task> tasks = Optional.ofNullable(projectService.findProjectById(projectId))
-                .map(taskRepository::findAllByProject)
-                .orElseThrow(userNotFound);
+    public List<Task> findAllByProjectId(Long projectId) {
+        final Project project = Optional.ofNullable(projectService.findProjectById(projectId))
+                .orElseThrow(ProjectService.projectNotFound);
+        return taskRepository.findAllByProject(project);
+    }
 
-        return tasks.stream()
+    public List<TaskModel> getAllTaskByProject(Long projectId) {
+        return findAllByProjectId(projectId)
+                .stream()
                 .map(TaskMapper::mapper)
                 .collect(Collectors.toList());
     }
@@ -135,8 +138,13 @@ public class TaskService {
         if (task.getStatus() == TaskStatus.CLOSED) {
             throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.task.status.closed.not.editable");
         }
-        Project project = projectService.findProjectById(taskEditRequest.getProjectId());
-        User user = userservice.getOne(taskEditRequest.getAssignedUser());
+        Project project = taskEditRequest.getProjectId() != null
+                ? projectService.findProjectById(taskEditRequest.getProjectId())
+                : task.getProject();
+
+        User user = taskEditRequest.getAssignedUser() != null
+                ? userservice.getOne(taskEditRequest.getAssignedUser())
+                : project.getAssignedUser();
         TaskMapper.updateRequestToEntity(task, taskEditRequest, requestUser, project, user);
 
         Task savedTask = taskRepository.save(task);
