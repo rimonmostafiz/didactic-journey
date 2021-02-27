@@ -36,16 +36,14 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class TaskService {
+    public static final Supplier<EntityNotFoundException> taskNotFound = () ->
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "taskId", "error.task.not.found");
+    public static final Supplier<ValidationException> notOwnTask = () ->
+            new ValidationException(HttpStatus.UNAUTHORIZED, "taskId", "error.task.user.not.authorized");
     private final UserService userservice;
     private final TaskRepository taskRepository;
     private final ProjectService projectService;
     private final ActivityTaskRepository activityTaskRepository;
-
-    public static final Supplier<EntityNotFoundException> taskNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "taskId", "error.task.not.found");
-
-    public static final Supplier<ValidationException> notOwnTask = () ->
-            new ValidationException(HttpStatus.UNAUTHORIZED, "taskId", "error.task.user.not.authorized");
 
     public TaskModel createTask(TaskCreateRequest taskCreateRequest, String requestUser) {
         Project project = projectService.findProjectById(taskCreateRequest.getProjectId());

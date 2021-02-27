@@ -34,16 +34,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final ActivityUserRepository activityUserRepository;
-
     public static final Predicate<User> isNotInactive = user -> !user.getStatus().equals(Status.INACTIVE);
-
     public static final Supplier<EntityNotFoundException> userNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ActivityUserRepository activityUserRepository;
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, passwordEncoder);

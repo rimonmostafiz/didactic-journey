@@ -38,17 +38,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectService {
 
+    public static final Supplier<EntityNotFoundException> projectNotFound = () ->
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
+    public static final Supplier<ValidationException> notOwnProject = () ->
+            new ValidationException(HttpStatus.UNAUTHORIZED, "projectId", "error.project.user.not.authorized");
     private final UserService userService;
     private final MessageSource messageSource;
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final ActivityProjectRepository activityProjectRepository;
-
-    public static final Supplier<EntityNotFoundException> projectNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
-
-    public static final Supplier<ValidationException> notOwnProject = () ->
-            new ValidationException(HttpStatus.UNAUTHORIZED, "projectId", "error.project.user.not.authorized");
 
     public ProjectModel createProject(ProjectCreateRequest createRequest, String requestUser) {
         User user = userService.getUserByUsername(requestUser);
