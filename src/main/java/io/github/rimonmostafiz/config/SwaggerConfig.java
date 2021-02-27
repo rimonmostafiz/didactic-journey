@@ -7,11 +7,9 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseBuilder;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.Response;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -35,24 +33,37 @@ public class SwaggerConfig {
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(Collections.singletonList(apiKey()))
                 .globalResponses(HttpMethod.GET, getGlobalResponse())
                 .globalResponses(HttpMethod.POST, getGlobalResponse())
                 .globalResponses(HttpMethod.PUT, getGlobalResponse())
                 .globalResponses(HttpMethod.PATCH, getGlobalResponse())
                 .globalResponses(HttpMethod.DELETE, getGlobalResponse())
-                .securitySchemes(Collections.singletonList(apiKey()))
-                .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("io.github.rimonmostafiz.api"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
-    public ApiKey apiKey() {
-        return new ApiKey("JWT Token Based Auth", AUTHORIZATION_HEADER, "header");
+
+
+    private ApiKey apiKey() {
+        return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
     }
 
-    public ApiInfo apiInfo() {
+    private SecurityContext securityContext() {
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        var authScope = new AuthorizationScope("global", "accessEverything");
+        var authorizationScopes = new AuthorizationScope[]{authScope};
+        return Collections.singletonList(new SecurityReference("JWT", authorizationScopes));
+    }
+
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Task Manager REST API")
                 .version("1.0.0")
@@ -62,7 +73,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    public Contact developerContact() {
+    private Contact developerContact() {
         return new Contact(DEVELOPER, DEVELOPER_WEBSITE, DEVELOPER_EMAIL);
     }
 

@@ -12,7 +12,6 @@ import io.github.rimonmostafiz.utils.RoleUtils;
 import io.github.rimonmostafiz.utils.Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,7 +57,7 @@ public class TaskController {
     }
 
     @GetMapping("/task/{id}")
-    @ApiOperation(value = "Get task by its id", notes = "Need to pass valid task id to get details of the task")
+    @ApiOperation(value = "Get task By ID", notes = "Need to pass valid task id to get details of the task")
     public ResponseEntity<RestResponse<TaskResponse>> getTask(HttpServletRequest request, @PathVariable Long id) {
         TaskModel task;
         final String username = Utils.getUserNameFromRequest(request);
@@ -68,17 +67,15 @@ public class TaskController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
-    @GetMapping("/task/search/{projectId}")
-    @Tag(name = "Search Tasks")
-    @ApiOperation(value = "Search Task - Get all by project", notes = "Need to pass a valid project id")
+    @GetMapping("/task/search-by-project/{projectId}")
+    @ApiOperation(value = "Search Task - Get all by project", notes = "Need to pass a valid project ID")
     public ResponseEntity<RestResponse<TaskResponse>> getAllByProject(@PathVariable Long projectId) {
         List<TaskModel> tasks = taskService.getAllTaskByProject(projectId);
         TaskResponse taskResponse = TaskResponse.of(tasks);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
-    @GetMapping("/task/search/expired")
-    @Tag(name = "Search Tasks")
+    @GetMapping("/task/search-by-status-expired")
     @ApiOperation(value = "Search Task - Get expired tasks(due date in the past)")
     public ResponseEntity<RestResponse<TaskResponse>> getExpiredTasks() {
         List<TaskModel> expiredTasks = taskService.getAllExpiredTask();
@@ -86,8 +83,7 @@ public class TaskController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
-    @GetMapping("/task/search/status/{status}")
-    @Tag(name = "Search Tasks")
+    @GetMapping("/task/search-by-status/{status}")
     @ApiOperation(value = "Search Task - By status", notes = "Status should be open/in progress/closed")
     public ResponseEntity<RestResponse<TaskResponse>> searchByStatus(@PathVariable String status) {
         var taskStatus = TaskStatus.getStatus(status);
@@ -96,7 +92,7 @@ public class TaskController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, taskResponse);
     }
 
-    @GetMapping("/task/search/{userId}")
+    @GetMapping("/task/search-by-user/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ApiOperation(
             value = "Get all tasks by user",

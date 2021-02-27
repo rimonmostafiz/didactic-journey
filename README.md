@@ -12,11 +12,10 @@
 - [Flyway](https://flywaydb.org/) (Database Migration)
 - [Swagger](https://swagger.io/) (API Documentation and API Client)
 
-### Optional Tools
-- [cURL](https://curl.se/) (command line tool and library
-for transferring data with URLs)
-- [Postman](https://www.postman.com/) (API Client)
-
+### API Testing Tools
+- [Swagger](https://swagger.io/)
+- [cURL](https://curl.se/)
+- [Postman](https://www.postman.com/)
 ## Build
 **Build Profile - dev**
 ```
@@ -50,7 +49,7 @@ mvn clean spring-boot:run -P prod -DskipTest
     | user          | password    | USER        |             |
 
 # API Description
-Root URL of the project is `/task-manager`
+Base URL of the project is `/task-manager`
 
 ## Swagger URL
 Click swagger link below to see all the API endpoints after running the project successfully
@@ -58,7 +57,7 @@ http://localhost:8080/task-manager/swagger-ui/#/
 
 ![swagger](swagger.jpg)
 
-## Authencation
+## Authentication
 There are two endpoint for authentication purpose
 
 **POST /auth/login** - Request with Username and Password, If authentication is successful then in response it will send jwt `access_token`, `refresh_token`. For every other subsequent request a valid jwt `access_token` is expected in `Autherization` header.  
@@ -107,3 +106,19 @@ curl -X POST 'http://localhost:8080/task-manager/auth/refresh' -H 'Authorization
    }
 }
 ```
+
+## Project
+- `POST /v1/project` - Create Project
+- `GET /v1/project/{id}` - Get Project By ID
+- `DELETE /v1/project/{id}` - Delete Project By ID
+- `GET /v1/projects/search-by-user/{userId}` - Get All project
+- `GET /v1/projects`
+
+## Task
+- `POST /v1/task` - Create Task
+- `GET /v1/task/{id}` - Get task By ID
+- `PATCH /v1/task/{id}` - Edit Task
+- `GET /v1/task/search-by-project/{projectId}` - Search Task - Get all project
+- `GET /v1/task/search-by-status-expired` - Search Task - Get expired Tasks (due date in the past)
+- `GET /v1/task/search-by-status/{status}` - Search Task - By Status
+- `GET /v1/task/search-by-user/{userId}` - Get all tasks by user

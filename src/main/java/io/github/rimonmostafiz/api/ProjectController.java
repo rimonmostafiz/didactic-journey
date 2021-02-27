@@ -57,7 +57,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/project/{id}")
-    @ApiOperation(value = "Delete Project By Id")
+    @ApiOperation(value = "Delete Project By ID")
     public ResponseEntity<RestResponse<ProjectDeleteResponse>> deleteProject(HttpServletRequest request,
                                                                              @PathVariable Long id) {
         String requestUser = Utils.getUserNameFromRequest(request);
@@ -66,7 +66,7 @@ public class ProjectController {
     }
 
     @GetMapping("/project/{id}")
-    @ApiOperation(value = "Get Project By Id")
+    @ApiOperation(value = "Get Project By ID")
     public ResponseEntity<RestResponse<ProjectResponse>> getProject(HttpServletRequest request, @PathVariable Long id) {
         ProjectModel project;
         final String username = Utils.getUserNameFromRequest(request);
@@ -76,13 +76,13 @@ public class ProjectController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, projectResponse);
     }
 
-    @GetMapping("/project/search/{userId}")
+    @GetMapping("/project/search-by-user/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ApiOperation(
             value = "Get all projects by user",
             notes = "An ADMIN User has the privilege to call this API"
     )
-    public ResponseEntity<RestResponse<ProjectResponse>> getProjectByUserId(@PathVariable Long userId) {
+    public ResponseEntity<RestResponse<ProjectResponse>> searchProjectByUserId(@PathVariable Long userId) {
         List<ProjectModel> projects = projectService.getAllProjectsByUser(userId);
         ProjectResponse projectResponse = ProjectResponse.of(projects);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, projectResponse);

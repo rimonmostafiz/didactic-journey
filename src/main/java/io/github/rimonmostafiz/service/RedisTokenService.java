@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static io.github.rimonmostafiz.service.auth.SecurityConstants.WHITE_LIST_ACCESS_TOKEN_PREFIX;
-
 /**
  * @author Rimon Mostafiz
  */
@@ -32,7 +30,7 @@ public class RedisTokenService {
     }
 
     public void addTokenToWhiteList(String accessToken) {
-        String wlAccessTokenKey = WHITE_LIST_ACCESS_TOKEN_PREFIX + accessToken;
+//        String wlAccessTokenKey = WHITE_LIST_ACCESS_TOKEN_PREFIX + accessToken;
 //        long accTokValInMilli = TimeUnit.MILLISECONDS.toMillis(accessTokenValidity);
 //        redisTemplate.opsForValue().set(wlAccessTokenKey, accessToken, accTokValInMilli, TimeUnit.MILLISECONDS);
     }
