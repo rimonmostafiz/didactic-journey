@@ -6,7 +6,7 @@ import io.github.rimonmostafiz.model.entity.db.Project;
 import io.github.rimonmostafiz.model.entity.db.Task;
 import io.github.rimonmostafiz.model.entity.db.User;
 import io.github.rimonmostafiz.model.request.TaskCreateRequest;
-import io.github.rimonmostafiz.model.request.TaskUpdateRequest;
+import io.github.rimonmostafiz.model.request.TaskEditRequest;
 
 /**
  * @author Rimon Mostafiz
@@ -37,13 +37,13 @@ public class TaskMapper {
         return entity;
     }
 
-    public static void updateRequestToEntity(Task entity, TaskUpdateRequest taskUpdateRequest, String createdBy, Project project, User user) {
+    public static void updateRequestToEntity(Task entity, TaskEditRequest taskEditRequest, String createdBy, Project project, User user) {
 
-        entity.setDescription(taskUpdateRequest.getDescription());
-        entity.setStatus(TaskStatus.getStatus(taskUpdateRequest.getStatus()));
+        entity.setDescription(taskEditRequest.getDescription());
+        entity.setStatus(TaskStatus.getStatus(taskEditRequest.getStatus()));
         entity.setProject(project);
         entity.setAssignedUser(user);
-        entity.setDueDate(taskUpdateRequest.getDueDate());
+        entity.setDueDate(taskEditRequest.getDueDate());
 
         entity.setCreatedBy(createdBy);
     }

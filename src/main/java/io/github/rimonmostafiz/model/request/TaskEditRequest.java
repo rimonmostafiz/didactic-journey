@@ -21,14 +21,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskUpdateRequest {
+public class TaskEditRequest {
     @NotBlank(message = "error.task.description.blank")
     private String description;
 
-    @NotNull(message = "error.task.status.blank")
+    @NotBlank(message = "error.task.status.blank")
     private String status;
 
-    @NotNull(message = "error.task.project.id.blank")
+    @NotNull(message = "error.task.project.id.null")
     private Long projectId;
 
     private Long assignedUser;

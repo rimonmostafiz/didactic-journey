@@ -1,6 +1,7 @@
 package io.github.rimonmostafiz.service.project;
 
 import io.github.rimonmostafiz.component.exception.EntityNotFoundException;
+import io.github.rimonmostafiz.component.exception.ValidationException;
 import io.github.rimonmostafiz.model.dto.ProjectModel;
 import io.github.rimonmostafiz.model.entity.activity.ActivityProject;
 import io.github.rimonmostafiz.model.entity.common.ActivityAction;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -36,8 +39,11 @@ public class ProjectService {
     private final Supplier<EntityNotFoundException> projectNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
 
-    Supplier<EntityNotFoundException> userNotFound = () ->
+    private final Supplier<EntityNotFoundException> userNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
+
+    private final Supplier<ValidationException> notOwnProject = () ->
+            new ValidationException(HttpStatus.UNAUTHORIZED, "projectId", "error.project.user.not.authorized");
 
     public ProjectModel createProject(ProjectCreateRequest createRequest, String requestUser) {
         User user = userService.getUserByUsername(requestUser);
@@ -56,12 +62,29 @@ public class ProjectService {
                 .orElseThrow(projectNotFound);
     }
 
+    public ProjectModel getProjectUser(Long id, String username) {
+        Predicate<Project> isOwnProject = project -> project.getCreatedBy().equals(username);
+
+        return Optional.of(projectRepository.findById(id))
+                .orElseThrow(projectNotFound)
+                .filter(isOwnProject)
+                .map(ProjectMapper::mapper)
+                .orElseThrow(notOwnProject);
+    }
+
     public Project findProjectById(Long id) {
         return projectRepository.findById(id).orElseThrow(projectNotFound);
     }
 
     public List<ProjectModel> getAllProjects() {
         return projectRepository.findAll()
+                .stream()
+                .map(ProjectMapper::mapper)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProjectModel> getAllProjectsCreatedBy(String username) {
+        return projectRepository.findAllByCreatedBy(username)
                 .stream()
                 .map(ProjectMapper::mapper)
                 .collect(Collectors.toList());
