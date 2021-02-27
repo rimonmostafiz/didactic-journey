@@ -1,5 +1,4 @@
-# didactic-journey
-## Task manager REST API
+# didactic-journey [Task manager REST API]
 
 ## Technology Used
 - Java 11
@@ -43,10 +42,10 @@ mvn clean spring-boot:run -P prod -DskipTest
 - Flyway will migrate db. Will create tables and add initial data.
 - Two default user will be created while db migration.
 
-    | Username      | Password    | ROLE        |             |
-    | -----------   | ----------- | ----------- | ----------- |
-    | admin         | admin1      | ADMIN       |             |
-    | user          | password    | USER        |             |
+    | Username      | Password    | ROLE        |
+    | -----------   | ----------- | ----------- |
+    | admin         | admin1      | ADMIN       |
+    | user          | password    | USER        |
 
 # API Description
 Base URL of the project is `/task-manager`
@@ -68,12 +67,8 @@ There are two endpoint for authentication purpose
 ### Example:  
 #### **Request**
 ```
+curl -X POST 'http://localhost:8080/task-manager/auth/login' -H 'Content-Type: application/json' -d '{"username":"admin","password":"admin1"}' | json_pp
 
-$ curl -X POST 'http://localhost:8080/task-manager/auth/login' -H 'Content-Type: application/json' -d '{"username":"admin","password":"admin1"}' | json_pp
-```
-_NOTE:_ `| json_pp` is for pretty printing json output. It is completely optional.
-#### **Response**
-```
 {
    "statusCode" : "SUCCESS",
    "success" : {
@@ -86,15 +81,13 @@ _NOTE:_ `| json_pp` is for pretty printing json output. It is completely optiona
    "status" : "OK"
 }
 ```
+_NOTE:_ `| json_pp` is for pretty printing json output in UNIX based terminal. It is completely optional.
 
 **POST /auth/refresh** - This is a special API endpoint. When `access_token` is expired then user can request new access token with `refresh_token`. Token should be sent on `Authorization` header with the prefix `Bearer<space>`.
-### Example:  
-#### **Request**
+### Example:
 ```
 curl -X POST 'http://localhost:8080/task-manager/auth/refresh' -H 'Authorization: Bearer eyJ0eXAiOiJyZWZyZXNoX3Rva2VuIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTYxNDQyNzY5NiwiZXhwIjoxNjE0NDQ5Mjk2fQ.Qf5-WRNHHVkHLC-NERHWfemzcDapLO327CFgQ5IO0IA' | json_pp
-```
-#### **Response**
-```
+
 {
    "statusCode" : "SUCCESS",
    "status" : "CREATED",
@@ -111,14 +104,14 @@ curl -X POST 'http://localhost:8080/task-manager/auth/refresh' -H 'Authorization
 - `POST /v1/project` - Create Project
 - `GET /v1/project/{id}` - Get Project By ID
 - `DELETE /v1/project/{id}` - Delete Project By ID
-- `GET /v1/projects/search-by-user/{userId}` - Get All project
-- `GET /v1/projects`
+- `GET /v1/projects/search-by-user/{userId}` - Get all projects by user
+- `GET /v1/projects` - Get All project
 
 ## Task
 - `POST /v1/task` - Create Task
 - `GET /v1/task/{id}` - Get task By ID
 - `PATCH /v1/task/{id}` - Edit Task
-- `GET /v1/task/search-by-project/{projectId}` - Search Task - Get all project
+- `GET /v1/task/search-by-project/{projectId}` - Search Task - Get all by project
 - `GET /v1/task/search-by-status-expired` - Search Task - Get expired Tasks (due date in the past)
 - `GET /v1/task/search-by-status/{status}` - Search Task - By Status
 - `GET /v1/task/search-by-user/{userId}` - Get all tasks by user
