@@ -41,13 +41,10 @@ public class TaskService {
     private final ProjectService projectService;
     private final ActivityTaskRepository activityTaskRepository;
 
-    private final Supplier<EntityNotFoundException> taskNotFound = () ->
+    public static final Supplier<EntityNotFoundException> taskNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "taskId", "error.task.not.found");
 
-    private final Supplier<EntityNotFoundException> userNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
-
-    private final Supplier<ValidationException> notOwnTask = () ->
+    public static final Supplier<ValidationException> notOwnTask = () ->
             new ValidationException(HttpStatus.UNAUTHORIZED, "taskId", "error.task.user.not.authorized");
 
     public TaskModel createTask(TaskCreateRequest taskCreateRequest, String requestUser) {
@@ -88,7 +85,7 @@ public class TaskService {
     public List<TaskModel> getAllTaskByUser(Long userId) {
         List<Task> tasks = userservice.findById(userId)
                 .map(taskRepository::findAllByAssignedUser)
-                .orElseThrow(userNotFound);
+                .orElseThrow(UserService.userNotFound);
 
         return tasks.stream()
                 .map(TaskMapper::mapper)

@@ -47,10 +47,7 @@ public class ProjectService {
     public static final Supplier<EntityNotFoundException> projectNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "projectId", "error.project.not.found");
 
-    private final Supplier<EntityNotFoundException> userNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
-
-    private final Supplier<ValidationException> notOwnProject = () ->
+    public static final Supplier<ValidationException> notOwnProject = () ->
             new ValidationException(HttpStatus.UNAUTHORIZED, "projectId", "error.project.user.not.authorized");
 
     public ProjectModel createProject(ProjectCreateRequest createRequest, String requestUser) {
@@ -101,7 +98,7 @@ public class ProjectService {
     public List<ProjectModel> getAllProjectsByUser(Long userId) {
         List<Project> projects = userService.findById(userId)
                 .map(projectRepository::findAllByAssignedUser)
-                .orElseThrow(userNotFound);
+                .orElseThrow(UserService.userNotFound);
 
         return projects.stream()
                 .map(ProjectMapper::mapper)

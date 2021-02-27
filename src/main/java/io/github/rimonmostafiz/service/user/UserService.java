@@ -1,5 +1,6 @@
 package io.github.rimonmostafiz.service.user;
 
+import io.github.rimonmostafiz.component.exception.EntityNotFoundException;
 import io.github.rimonmostafiz.component.exception.UserNotFoundException;
 import io.github.rimonmostafiz.model.entity.activity.ActivityUser;
 import io.github.rimonmostafiz.model.entity.common.ActivityAction;
@@ -12,6 +13,7 @@ import io.github.rimonmostafiz.repository.UserRepository;
 import io.github.rimonmostafiz.repository.activity.ActivityUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +40,10 @@ public class UserService {
 
     private final ActivityUserRepository activityUserRepository;
 
-    Predicate<User> isNotInactive = user -> !user.getStatus().equals(Status.INACTIVE);
+    public static final Predicate<User> isNotInactive = user -> !user.getStatus().equals(Status.INACTIVE);
+
+    public static final Supplier<EntityNotFoundException> userNotFound = () ->
+            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, passwordEncoder);

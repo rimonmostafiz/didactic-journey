@@ -53,7 +53,7 @@ mvn clean spring-boot:run -P prod -DskipTest
 Root URL of the project is `/task-manager`
 
 ## Swagger URL
-After running the project click swagger link below to see all the API endpoints  
+Click swagger link below to see all the API endpoints after running the project successfully
 http://localhost:8080/task-manager/swagger-ui/#/
 
 ![swagger](swagger.jpg)
@@ -61,8 +61,8 @@ http://localhost:8080/task-manager/swagger-ui/#/
 ## Authencation
 There are two endpoint for authentication purpose
 
-**POST /auth/login** - Request with Username and Pssword, If authentication is successful then in respose it will send jwt `access_token`, `refresh_token`. For every other subsequest request a valid jwt `access_token` is expected in `Autherization` header.  
-- Token Validaty (can be configured in `application.properties`)
+**POST /auth/login** - Request with Username and Password, If authentication is successful then in response it will send jwt `access_token`, `refresh_token`. For every other subsequent request a valid jwt `access_token` is expected in `Autherization` header.  
+- Token Validity (can be configured in `application.properties`)
     - `access_token` is 60 Minutes(1 Hour)
     - `refresh_token` is 360 Minutes(6 Hours)
 
@@ -72,7 +72,7 @@ There are two endpoint for authentication purpose
 
 $ curl -X POST 'http://localhost:8080/task-manager/auth/login' -H 'Content-Type: application/json' -d '{"username":"admin","password":"admin1"}' | json_pp
 ```
-_NOTE:_ `| json_pp` is for pretty printing json output and its compleatly optional.
+_NOTE:_ `| json_pp` is for pretty printing json output. It is completely optional.
 #### **Response**
 ```
 {
@@ -88,11 +88,11 @@ _NOTE:_ `| json_pp` is for pretty printing json output and its compleatly option
 }
 ```
 
-**POST /auth/refresh** - This is a special API endoing. When `access_token` is experired then user can request new access token with `refresh_token`. Token should be send on `Authorization` header with the prefix `Bearer<space>`.
+**POST /auth/refresh** - This is a special API endpoint. When `access_token` is expired then user can request new access token with `refresh_token`. Token should be sent on `Authorization` header with the prefix `Bearer<space>`.
 ### Example:  
 #### **Request**
 ```
-curl -X POST 'http://localhost:8080/task-manager/auth/refresh' -H 'Authorization: Bearer eyJ0eXAiOiJyZWZyZXNoX3Rva2VuIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTYxNDQyNzY5NiwiZXhwIjoxNjE0NDQ5Mjk2fQ.Qf5-WRNHHVkHLC-NERHWfemzcDapLO327CFgQ5IO0IA' || json_pp
+curl -X POST 'http://localhost:8080/task-manager/auth/refresh' -H 'Authorization: Bearer eyJ0eXAiOiJyZWZyZXNoX3Rva2VuIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTYxNDQyNzY5NiwiZXhwIjoxNjE0NDQ5Mjk2fQ.Qf5-WRNHHVkHLC-NERHWfemzcDapLO327CFgQ5IO0IA' | json_pp
 ```
 #### **Response**
 ```
